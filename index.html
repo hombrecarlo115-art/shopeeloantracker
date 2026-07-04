@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neutral Loan Organizer</title>
+    <!-- Custom Browser Favicon: Minimalist Cart with Money -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><circle cx=%228%22 cy=%2220%22 r=%221.5%22/><circle cx=%2217%22 cy=%2220%22 r=%221.5%22/><path d=%22M2 3h3.5L8 15h9.5l3-9H6%22/><rect x=%229.5%22 y=%226.5%22 width=%227%22 height=%224%22 rx=%220.5%22 fill=%22black%22 stroke=%22white%22 stroke-width=%221%22 transform=%22rotate(-12 13 8.5)%22/><circle cx=%2212%22 cy=%2211%22 r=%222%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221%22/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -93,8 +95,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <div class="flex items-center gap-3">
-                    <div class="bg-black text-white p-2.5 border border-black flex items-center justify-center w-10 h-10">
-                        <i class="fas fa-leaf text-xl"></i>
+                    <!-- Branded Minimalist Icon Container: Cart with Money -->
+                    <div class="bg-black text-white p-2 border border-black flex items-center justify-center w-10 h-10">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Cart Wheels -->
+                            <circle cx="8" cy="20" r="1.5"/>
+                            <circle cx="17" cy="20" r="1.5"/>
+                            <!-- Basket -->
+                            <path d="M2 3h3.5L8 15h9.5l3-9H6"/>
+                            <!-- Cash Bill stacked inside -->
+                            <rect x="9.5" y="6.5" width="7" height="4" rx="0.5" fill="currentColor" stroke="black" stroke-width="1" transform="rotate(-12 13 8.5)"/>
+                            <!-- Currency emblem/coin outline -->
+                            <circle cx="12" cy="11" r="1.8" fill="none" stroke="currentColor" stroke-width="1"/>
+                        </svg>
                     </div>
                     <span class="font-bold text-xl tracking-tight text-black">MY LOANS LOG</span>
                 </div>
@@ -1168,6 +1181,13 @@
         let isAlertsExpanded = false; 
         let isFirstTimeExpanded = false; 
         
+        // Active List Collapsible State Tracking
+        let activeListsExpanded = {
+            shopping: true,
+            money: true,
+            appliances: true
+        };
+
         // Projection State Tracking Dates per Tab Category
         let projectionDates = {
             shopping: new Date(),
@@ -1269,6 +1289,11 @@
                     if(labelText) labelText.innerText = "VIEW LIST";
                 }
             }
+        };
+
+        window.toggleActiveList = (type) => {
+            activeListsExpanded[type] = !activeListsExpanded[type];
+            renderData();
         };
 
         function switchTab(tabId) {
@@ -2440,6 +2465,24 @@
                     return;
                 }
 
+                // Append Accordion Collapsible Header Wrapper
+                const isListExpanded = activeListsExpanded[type];
+                const listHeader = document.createElement('div');
+                listHeader.className = "border border-black p-4 bg-stone-50 flex justify-between items-center cursor-pointer select-none mb-3 hover:bg-stone-100 transition-colors";
+                listHeader.onclick = () => toggleActiveList(type);
+                listHeader.innerHTML = `
+                    <span class="font-bold text-xs tracking-wider uppercase">${type.toUpperCase()} ACTIVE LIST (${renderedLoans.length})</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] font-bold border border-black bg-white px-2 py-1 uppercase tracking-wider">${isListExpanded ? 'HIDE LIST' : 'VIEW LIST'}</span>
+                        <i class="fas fa-chevron-down text-black transition-transform duration-300 ${isListExpanded ? 'rotate-180' : ''}"></i>
+                    </div>
+                `;
+                list.appendChild(listHeader);
+
+                const listContentWrapper = document.createElement('div');
+                listContentWrapper.className = `space-y-4 ${isListExpanded ? '' : 'hidden'}`;
+                list.appendChild(listContentWrapper);
+
                 renderedLoans.forEach(loan => {
                     const icon = type === 'shopping' ? 'fa-box-open' : type === 'money' ? 'fa-money-bill-wave' : 'fa-tv';
                     const card = document.createElement('div');
@@ -2553,7 +2596,7 @@
                         `;
                         card.appendChild(actionsDiv);
                     }
-                    list.appendChild(card);
+                    listContentWrapper.appendChild(card);
                 });
             });
 
