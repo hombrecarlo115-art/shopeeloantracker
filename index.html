@@ -1,0 +1,2980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neutral Loan Organizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #ffffff; 
+            color: #111111; 
+        }
+        h1, h2, h3, h4, h5, h6, input, select, textarea, button, .font-mono, .font-heading { 
+            font-family: 'Courier New', Courier, monospace; 
+        }
+        
+        .mini-card { 
+            background: #ffffff; 
+            border: 1px solid #111111;
+            padding: 1.5rem;
+            border-radius: 0px; /* Sharp minimalist lines */
+        }
+        
+        .progress-bar-minimal {
+            background-color: #111111;
+        }
+
+        .mini-btn {
+            background-color: #111111;
+            color: #ffffff;
+            border: 1px solid #111111;
+            padding: 0.5rem 1rem;
+            transition: all 0.15s ease-in-out;
+            border-radius: 0px;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        .mini-btn:hover {
+            background-color: #ffffff;
+            color: #111111;
+        }
+
+        .mini-btn-secondary {
+            background-color: #ffffff;
+            color: #111111;
+            border: 1px solid #111111;
+            padding: 0.5rem 1rem;
+            transition: all 0.15s ease-in-out;
+            border-radius: 0px;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        .mini-btn-secondary:hover {
+            background-color: #111111;
+            color: #ffffff;
+        }
+
+        .tab-btn {
+            background-color: #ffffff;
+            color: #777777;
+            border: 1px solid #cccccc;
+            padding: 0.5rem 1.25rem;
+            font-weight: bold;
+            font-size: 0.875rem;
+            border-radius: 0px;
+            transition: all 0.1s;
+        }
+        .tab-btn.active {
+            background-color: #111111;
+            color: #ffffff;
+            border-color: #111111;
+        }
+        
+        /* Smooth monospaced custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #ffffff; border-left: 1px solid #111111; }
+        ::-webkit-scrollbar-thumb { background: #111111; border: 2px solid #ffffff; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Minimalist Top Contact Banner -->
+    <div class="bg-black text-white text-center py-2 text-xs border-b border-black tracking-widest uppercase">
+        hombrecarlo115@gmail.com
+    </div>
+
+    <nav class="bg-white border-b border-black sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <div class="bg-black text-white p-2.5 border border-black flex items-center justify-center w-10 h-10">
+                        <i class="fas fa-leaf text-xl"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-black">MY LOANS LOG</span>
+                </div>
+                <div class="hidden xl:block">
+                    <div class="flex space-x-1" id="nav-tabs">
+                        <button onclick="switchTab('dashboard')" class="tab-btn active" data-target="dashboard">DASHBOARD</button>
+                        <button onclick="switchTab('shopping')" class="tab-btn" data-target="shopping">SHOPPING LOANS</button>
+                        <button onclick="switchTab('expenses')" class="tab-btn" data-target="expenses">SHOPPING EXPENSES</button>
+                        <button onclick="switchTab('money')" class="tab-btn" data-target="money">MONEY</button>
+                        <button onclick="switchTab('appliances')" class="tab-btn" data-target="appliances">APPLIANCES</button>
+                        <button onclick="switchTab('archive')" class="tab-btn" data-target="archive">ARCHIVE</button>
+                        <button onclick="switchTab('calculator')" class="tab-btn" data-target="calculator">CALCULATOR</button>
+                    </div>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="-mr-2 flex xl:hidden">
+                    <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="inline-flex items-center justify-center p-2.5 border border-black text-black bg-white hover:bg-black hover:text-white transition-colors">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Navigation Menu -->
+        <div class="hidden xl:hidden bg-white border-b border-black" id="mobile-menu">
+            <div class="px-4 pt-2 pb-4 space-y-2">
+                <button onclick="switchTab('dashboard'); document.getElementById('mobile-menu').classList.add('hidden')" class="block w-full text-left py-2.5 px-4 text-sm font-bold border border-black hover:bg-black hover:text-white">DASHBOARD</button>
+                <button onclick="switchTab('shopping'); document.getElementById('mobile-menu').classList.add('hidden')" class="block w-full text-left py-2.5 px-4 text-sm font-bold border border-black hover:bg-black hover:text-white">SHOPPING LOANS</button>
+                <button onclick="switchTab('expenses'); document.getElementById('mobile-menu').classList.add('hidden')" class="block w-full text-left py-2.5 px-4 text-sm font-bold border border-black hover:bg-black hover:text-white">SHOPPING EXPENSES</button>
+                <button onclick="switchTab('money'); document.getElementById('mobile-menu').classList.add('hidden')" class="block w-full text-left py-2.5 px-4 text-sm font-bold border border-black hover:bg-black hover:text-white">MONEY</button>
+                <button onclick="switchTab('appliances'); document.getElementById('mobile-menu').classList.add('hidden')" class="block w-full text-left py-2.5 px-4 text-sm font-bold border border-black hover:bg-black hover:text-white">APPLIANCES</button>
+                <button onclick="switchTab('archive'); document.getElementById('mobile-menu').classList.add('hidden')" class="block w-full text-left py-2.5 px-4 text-sm font-bold border border-black hover:bg-black hover:text-white">ARCHIVE</button>
+                <button onclick="switchTab('calculator'); document.getElementById('mobile-menu').classList.add('hidden')" class="block w-full text-left py-2.5 px-4 text-sm font-bold border border-black hover:bg-black hover:text-white">CALCULATOR</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Consolidated Alert Summary Banner -->
+    <div id="alerts-container" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-3 empty:hidden"></div>
+
+    <!-- First Time Items Summary Banner -->
+    <div id="firsttime-container" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-4 space-y-3 empty:hidden"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- ==================== DASHBOARD TAB ==================== -->
+        <div id="dashboard" class="tab-content active">
+            <div class="mb-8 border-b border-black pb-4 text-left">
+                <h2 class="text-2xl font-bold text-black uppercase tracking-wider">SYSTEM STATUS</h2>
+                <p class="text-xs text-stone-500 mt-1">Overview of outstanding liabilities & metrics.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Balance -->
+                <div class="mini-card flex flex-col justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">TOTAL REMAINING</p>
+                        <h3 class="text-xl font-bold text-black" id="dash-total-balance">₱0.00</h3>
+                    </div>
+                    <div class="text-stone-400 text-right mt-4"><i class="fas fa-wallet text-lg"></i></div>
+                </div>
+                <!-- Total Monthly Dues -->
+                <div class="mini-card flex flex-col justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">CURRENT MONTH DUES</p>
+                        <h3 class="text-xl font-bold text-black" id="dash-total-monthly">₱0.00</h3>
+                    </div>
+                    <div class="text-stone-400 text-right mt-4"><i class="fas fa-calendar-check text-lg"></i></div>
+                </div>
+                <!-- Active Loans -->
+                <div class="mini-card flex flex-col justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">ACTIVE ACCOUNTS</p>
+                        <h3 class="text-xl font-bold text-black" id="dash-total-loans">0</h3>
+                    </div>
+                    <div class="text-stone-400 text-right mt-4"><i class="fas fa-layer-group text-lg"></i></div>
+                </div>
+                <!-- Debt-Free Target Date Summary Block -->
+                <div class="mini-card flex flex-col justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">DEBT-FREE TARGET</p>
+                        <h3 class="text-lg font-bold text-black" id="dash-debt-free-date">NO DEBT 🎉</h3>
+                        <p class="text-[10px] text-stone-500 uppercase mt-1" id="dash-debt-free-countdown">CONGRATULATIONS!</p>
+                    </div>
+                    <div class="text-stone-400 text-right mt-4"><i class="fas fa-dove text-lg"></i></div>
+                </div>
+            </div>
+
+            <!-- 1 MONTH REMAINING SECTION -->
+            <div id="dashboard-1month-section" class="mb-10 hidden">
+                <h3 class="text-lg font-bold text-black mb-4 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-flag-checkered text-black"></i> Final Installment Highlights
+                </h3>
+                <div class="border border-black overflow-hidden bg-white">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="bg-stone-100 border-b border-black">
+                                    <th class="p-3 font-bold text-xs uppercase text-black">CATEGORY</th>
+                                    <th class="p-3 font-bold text-xs uppercase text-black">LENDER / ITEM</th>
+                                    <th class="p-3 font-bold text-xs uppercase text-black text-right">REMAINING DUE</th>
+                                    <th class="p-3 font-bold text-xs uppercase text-black">DUE DATE</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-1month-tbody" class="text-xs">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="mini-card max-w-4xl mx-auto mt-10">
+                <h3 class="text-sm font-bold text-black mb-2 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fas fa-cloud-download-alt"></i> LOCAL DATA PORTABILITY
+                </h3>
+                <p class="text-xs text-stone-500 mb-6">Backup, restore, and transfer your financial records natively. All data remains offline inside your browser sandbox.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-stone-200 p-4">
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">CSV FLAT-SPREADSHEET</p>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="downloadCSVTemplate()" class="mini-btn-secondary w-full text-center py-2 text-xs">
+                                <i class="fas fa-file-csv mr-1"></i> DOWNLOAD TEMPLATE
+                            </button>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="exportData()" class="mini-btn-secondary py-2 text-xs text-center">
+                                    <i class="fas fa-download mr-1"></i> EXPORT
+                                </button>
+                                <div class="relative">
+                                    <input type="file" id="csv-upload" accept=".csv" class="hidden" onchange="importData(event)">
+                                    <button onclick="document.getElementById('csv-upload').click()" class="mini-btn w-full py-2 text-xs text-center">
+                                        <i class="fas fa-upload mr-1"></i> IMPORT
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-stone-200 p-4">
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">JSON SCHEMA DUMP</p>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="exportJSON()" class="mini-btn-secondary w-full py-2 text-xs text-center">
+                                <i class="fas fa-file-code mr-1"></i> EXPORT FULL SCHEMA
+                            </button>
+                            <div class="relative">
+                                <input type="file" id="json-upload" accept=".json" class="hidden" onchange="importJSON(event)">
+                                <button onclick="document.getElementById('json-upload').click()" class="mini-btn w-full py-2 text-xs text-center">
+                                    <i class="fas fa-upload mr-1"></i> RESTORE BACKUP
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SHOPPING LOANS TAB ==================== -->
+        <div id="shopping" class="tab-content">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border border-black p-4 bg-stone-50">
+                <div>
+                    <h2 class="text-xl font-bold text-black uppercase tracking-wider flex items-center gap-2">
+                        SHOPPING LIABILITIES <i class="fas fa-box-open text-stone-400"></i>
+                    </h2>
+                    <p class="text-xs text-stone-500 mt-1">Accepts Principal, Monthly Payment, months & processing fee variables.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button onclick="universalPay('shopping')" class="mini-btn-secondary text-xs px-4 py-2 flex-1 md:flex-none">
+                        <i class="fas fa-check-double mr-1"></i> PAY CURRENT DUE (1 MO)
+                    </button>
+                    <button onclick="requestCategoryPrepay('shopping')" class="mini-btn text-xs px-4 py-2 flex-1 md:flex-none">
+                        <i class="fas fa-piggy-bank mr-1"></i> PAY ALL REMAININGS
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projection Navigation Month Controller -->
+            <div class="border border-black p-4 mb-6 bg-stone-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="changeProjectionMonth('shopping', -1)" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        <i class="fas fa-chevron-left mr-1"></i> PREV MONTH
+                    </button>
+                    <button onclick="resetProjectionMonth('shopping')" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        CURRENT
+                    </button>
+                    <button onclick="changeProjectionMonth('shopping', 1)" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        NEXT MONTH <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="text-center sm:text-right">
+                    <span class="text-[10px] font-bold text-stone-500 block tracking-widest uppercase">PROJECTION TARGET MONTH</span>
+                    <span class="font-bold text-black uppercase text-xs" id="shopping-projection-label">JULY 2026</span>
+                </div>
+            </div>
+
+            <!-- CATEGORY SUMMARY BOXES -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="shopping-summary-paid-label">PAID SO FAR</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="shopping-summary-paid">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-check-circle"></i></div>
+                </div>
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="shopping-summary-monthly-label">MONTHLY LIABILITY</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="shopping-summary-monthly">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-calendar-alt"></i></div>
+                </div>
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="shopping-summary-remaining-label">OUTSTANDING PRINCIPAL</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="shopping-summary-remaining">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-hourglass-half"></i></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form -->
+                <div class="lg:col-span-1 mini-card" id="shopping-form-container">
+                    <h3 class="text-sm font-bold text-black border-b border-black pb-2 mb-4 uppercase tracking-widest" id="shopping-form-title">
+                        ADD ACCOUNT ENTRY
+                    </h3>
+
+                    <!-- Choice Switch between Loan & On-Time Buy -->
+                    <div class="mb-4">
+                        <label class="block font-bold text-[10px] text-stone-500 mb-1.5 uppercase tracking-wider">ENTRY TYPE</label>
+                        <div class="grid grid-cols-2 gap-1 border border-black p-1 bg-stone-50">
+                            <button type="button" id="toggle-type-loan" onclick="setShoppingFormMode('loan')" class="py-1.5 text-[10px] font-bold text-center bg-black text-white">SHOPPING LOAN</button>
+                            <button type="button" id="toggle-type-expense" onclick="setShoppingFormMode('expense')" class="py-1.5 text-[10px] font-bold text-center text-black">ON TIME BUY</button>
+                        </div>
+                    </div>
+
+                    <form id="shopping-form" onsubmit="saveLoan(event, 'shopping')">
+                        <input type="hidden" id="shopping-id">
+                        <input type="hidden" id="shopping-form-mode" value="loan"> <!-- 'loan' or 'expense' -->
+                        
+                        <div class="space-y-4 text-xs">
+                            <!-- Shop Picker / Lender -->
+                            <div>
+                                <label class="block font-bold text-black mb-1" id="label-shopping-lender">LENDER / BRAND</label>
+                                <div id="wrapper-lender-input">
+                                    <select id="shopping-lender-select" onchange="toggleLenderSelect()" class="w-full bg-white border border-black text-black p-2.5 transition-colors mb-2 font-bold">
+                                        <option value="Shopee SPayLater">Shopee SPayLater</option>
+                                        <option value="LazPayLater">LazPayLater</option>
+                                        <option value="TikTok Pay Later">TikTok Pay Later</option>
+                                        <option value="Other">Other (Custom)</option>
+                                    </select>
+                                    <input type="text" id="shopping-lender" placeholder="Enter custom lender name" class="hidden w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                                <div id="wrapper-shop-select" class="hidden">
+                                    <select id="shopping-shop" class="w-full bg-white border border-black text-black p-2.5 transition-colors font-bold">
+                                        <option value="Shopee">Shopee</option>
+                                        <option value="TikTok">TikTok</option>
+                                        <option value="Lazada">Lazada</option>
+                                        <option value="Shein">Shein</option>
+                                        <option value="Amazon">Amazon</option>
+                                        <option value="Other">Other Store</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Item Description -->
+                            <div>
+                                <label class="block font-bold text-black mb-1">ITEM NAME / DESCRIPTION</label>
+                                <input type="text" id="shopping-item" required class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+
+                            <!-- LOAN ONLY ELEMENTS -->
+                            <div id="shopping-loan-fields-1" class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold text-black mb-1">ORIGINAL PRICE (₱)</label>
+                                    <input type="number" id="shopping-principal" required min="0" step="0.01" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-black mb-1">PROCESSING FEE (₱)</label>
+                                    <input type="number" id="shopping-processing-fee" required min="0" step="0.01" value="0" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                            </div>
+                            <div id="shopping-loan-fields-2" class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold text-black mb-1">MONTHLY PAYMENT (₱)</label>
+                                    <input type="number" id="shopping-monthly" required min="0" step="0.01" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-black mb-1">TENURE (MONTHS)</label>
+                                    <input type="number" id="shopping-months" required min="1" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                            </div>
+                            
+                            <!-- EXPENSE ONLY ELEMENTS -->
+                            <div id="shopping-expense-fields" class="hidden space-y-4">
+                                <div>
+                                    <label class="block font-bold text-black mb-1">MAIN ITEM PRICE (₱)</label>
+                                    <input type="number" id="shopping-price" min="0" step="0.01" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+
+                                <div class="border border-black p-3 bg-stone-50">
+                                    <label class="flex items-center gap-2 cursor-pointer font-bold text-[10px]">
+                                        <input type="checkbox" id="shopping-is-combined" onchange="toggleCombineSection()" class="border-black rounded-none">
+                                        <span>COMBINE WITH OTHER ITEMS</span>
+                                    </label>
+                                    
+                                    <div id="combine-section" class="hidden mt-3 space-y-3 pt-3 border-t border-dashed border-stone-300">
+                                        <p class="text-[9px] font-bold text-stone-500 uppercase tracking-wider">ADD COMBINED SUB-ITEMS</p>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <input type="text" id="sub-item-name" placeholder="Sub-item Name" class="bg-white border border-black p-2 text-xs" onkeydown="if(event.key === 'Enter') { event.preventDefault(); addCombinedSubItem(); }">
+                                            <input type="number" id="sub-item-price" placeholder="Price (₱)" class="bg-white border border-black p-2 text-xs" onkeydown="if(event.key === 'Enter') { event.preventDefault(); addCombinedSubItem(); }">
+                                        </div>
+                                        <button type="button" onclick="addCombinedSubItem()" class="w-full mini-btn-secondary py-1 text-[10px]"><i class="fas fa-plus"></i> ADD SUB-ITEM</button>
+                                        
+                                        <!-- Form Sub-items list -->
+                                        <div id="form-sub-items-list" class="space-y-1 max-h-[120px] overflow-y-auto pr-1"></div>
+                                        
+                                        <div class="border-t border-black pt-2 space-y-1.5 text-[11px] font-bold">
+                                            <div class="flex justify-between text-stone-500">
+                                                <span>TOTAL COMBINED:</span>
+                                                <span id="form-total-combined">₱0.00</span>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-black">FINAL PRICE (₱):</span>
+                                                <input type="number" id="shopping-final-price" oninput="calculateCombinedDifference()" step="0.01" class="w-24 bg-white border border-black p-1 text-right text-xs" placeholder="0.00">
+                                            </div>
+                                            <div class="flex justify-between text-black border-t border-dashed border-stone-300 pt-1.5">
+                                                <span>SAVINGS (DIFFERENCE):</span>
+                                                <span id="form-combined-difference">₱0.00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Calculation Breakdown Card (LOAN ONLY) -->
+                            <div id="shopping-calc-card" class="border border-black p-4 bg-stone-50">
+                                <p class="text-[10px] font-bold text-black uppercase tracking-wider mb-2 border-b border-black pb-1">INTEREST BREAKDOWN ANALYSIS</p>
+                                <div class="space-y-1 text-[11px]">
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Total Payment:</span>
+                                        <span class="font-bold text-black" id="shopping-calc-total-payment">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Net Loan Amount:</span>
+                                        <span class="font-bold text-black" id="shopping-calc-net-loan">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between border-t border-dashed border-stone-300 pt-1">
+                                        <span class="text-stone-500 font-bold">Total Interest:</span>
+                                        <span class="font-bold text-black" id="shopping-calc-interest-amount">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Interest % (Flat):</span>
+                                        <span class="font-bold text-black" id="shopping-calc-interest-pct-total">0.00%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Interest % / Month:</span>
+                                        <span class="font-bold text-black" id="shopping-calc-interest-pct-month">0.00%</span>
+                                    </div>
+                                    <div class="flex justify-between border-t border-dashed border-stone-300 pt-1">
+                                        <span class="text-stone-500">Monthly Interest:</span>
+                                        <span class="font-bold text-black" id="shopping-calc-monthly-interest-total">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Mo. Interest/Month:</span>
+                                        <span class="font-bold text-black" id="shopping-calc-monthly-interest-per-month">₱0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Common Fields -->
+                            <div>
+                                <label class="block font-bold text-black mb-1" id="label-shopping-date">PURCHASE DATE</label>
+                                <input type="date" id="shopping-date" required class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div id="wrapper-months-paid">
+                                <label class="block font-bold text-black mb-1">MONTHS ALREADY PAID</label>
+                                <input type="number" id="shopping-paid" required min="0" value="0" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div class="pt-3 flex gap-2">
+                                <button type="submit" class="mini-btn flex-1 py-3">SAVE RECORD</button>
+                                <button type="button" onclick="resetForm('shopping')" class="mini-btn-secondary py-3 px-4">CLEAR</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- List -->
+                <div class="lg:col-span-2 space-y-4" id="shopping-list"></div>
+            </div>
+        </div>
+
+        <!-- ==================== SHOPPING EXPENSES TAB ==================== -->
+        <div id="expenses" class="tab-content">
+            <div class="mb-6 border border-black p-4 bg-stone-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-black uppercase tracking-wider flex items-center gap-2">
+                        SHOPPING EXPENSES <i class="fas fa-shopping-bag text-stone-400"></i>
+                    </h2>
+                    <p class="text-xs text-stone-500 mt-1">Check how much money you spend dynamically by month, store, or target date.</p>
+                </div>
+            </div>
+
+            <!-- Expense Filters & Dashboard Overview -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <!-- Selector Inputs -->
+                <div class="mini-card flex flex-col gap-4">
+                    <h3 class="text-xs font-bold text-stone-500 uppercase tracking-widest">FILTERS</h3>
+                    <div>
+                        <label class="block font-bold text-[10px] text-black mb-1.5">MONTH & YEAR</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="expense-filter-month" onchange="renderExpenses()" class="bg-white border border-black p-2 text-xs font-semibold">
+                                <option value="all">ALL MONTHS</option>
+                                <option value="0">JANUARY</option>
+                                <option value="1">FEBRUARY</option>
+                                <option value="2">MARCH</option>
+                                <option value="3">APRIL</option>
+                                <option value="4">MAY</option>
+                                <option value="5">JUNE</option>
+                                <option value="6">JULY</option>
+                                <option value="7">AUGUST</option>
+                                <option value="8">SEPTEMBER</option>
+                                <option value="9">OCTOBER</option>
+                                <option value="10">NOVEMBER</option>
+                                <option value="11">DECEMBER</option>
+                            </select>
+                            <select id="expense-filter-year" onchange="renderExpenses()" class="bg-white border border-black p-2 text-xs font-semibold">
+                                <option value="all">ALL YEARS</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[10px] text-black mb-1.5">ONLINE SHOP / STORE</label>
+                        <select id="expense-filter-shop" onchange="renderExpenses()" class="w-full bg-white border border-black p-2 text-xs font-semibold">
+                            <option value="all">ALL STORES</option>
+                            <option value="Shopee">Shopee</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="Lazada">Lazada</option>
+                            <option value="Shein">Shein</option>
+                            <option value="Amazon">Amazon</option>
+                            <option value="Other">Other Store</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Total Spent Stat Block -->
+                <div class="mini-card flex flex-col justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">TOTAL SPECIFIED EXPENDITURE</p>
+                        <h3 class="text-2xl font-bold text-black" id="expense-total-display">₱0.00</h3>
+                        <p class="text-[10px] text-stone-500 mt-2">Calculated directly from filtered data.</p>
+                    </div>
+                    <div class="text-stone-300 text-right"><i class="fas fa-receipt text-2xl"></i></div>
+                </div>
+
+                <!-- Spend Distribution Visualizer -->
+                <div class="mini-card flex flex-col justify-between">
+                    <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">STORE EXPENDITURE BREAKDOWN</p>
+                    <div id="expense-chart-container" class="space-y-2 text-[10px] overflow-y-auto max-h-[140px] pr-2">
+                        <!-- Dynamic Minimal Bar Chart loaded by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dense Table Ledger Layout -->
+            <div class="border border-black bg-white overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[700px] text-xs">
+                        <thead>
+                            <tr class="bg-stone-100 border-b border-black">
+                                <th class="p-3 font-bold text-black">PURCHASE DATE</th>
+                                <th class="p-3 font-bold text-black">STORE</th>
+                                <th class="p-3 font-bold text-black">ITEM DESCRIPTION</th>
+                                <th class="p-3 font-bold text-black text-right">PRICE (₱)</th>
+                                <th class="p-3 font-bold text-black text-center w-[120px]">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-table-tbody" class="divide-y divide-stone-200">
+                            <!-- Dynamic Table Rows populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== MONEY LOAN TAB ==================== -->
+        <div id="money" class="tab-content">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border border-black p-4 bg-stone-50">
+                <div>
+                    <h2 class="text-xl font-bold text-black uppercase tracking-wider flex items-center gap-2">
+                        MONEY LIABILITIES <i class="fas fa-money-bill-wave text-stone-400"></i>
+                    </h2>
+                    <p class="text-xs text-stone-500 mt-1">Cash, bank cards, and general personal loans.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button onclick="universalPay('money')" class="mini-btn-secondary text-xs px-4 py-2 flex-1 md:flex-none">
+                        <i class="fas fa-check-double mr-1"></i> PAY CURRENT DUE (1 MO)
+                    </button>
+                    <button onclick="requestCategoryPrepay('money')" class="mini-btn text-xs px-4 py-2 flex-1 md:flex-none">
+                        <i class="fas fa-piggy-bank mr-1"></i> PAY ALL REMAININGS
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projection Navigation Month Controller -->
+            <div class="border border-black p-4 mb-6 bg-stone-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="changeProjectionMonth('money', -1)" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        <i class="fas fa-chevron-left mr-1"></i> PREV MONTH
+                    </button>
+                    <button onclick="resetProjectionMonth('money')" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        CURRENT
+                    </button>
+                    <button onclick="changeProjectionMonth('money', 1)" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        NEXT MONTH <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="text-center sm:text-right">
+                    <span class="text-[10px] font-bold text-stone-500 block tracking-widest uppercase">PROJECTION TARGET MONTH</span>
+                    <span class="font-bold text-black uppercase text-xs" id="money-projection-label">JULY 2026</span>
+                </div>
+            </div>
+
+            <!-- CATEGORY SUMMARY BOXES -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="money-summary-paid-label">PAID SO FAR</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="money-summary-paid">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-check-circle"></i></div>
+                </div>
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="money-summary-monthly-label">MONTHLY LIABILITY</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="money-summary-monthly">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-calendar-alt"></i></div>
+                </div>
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="money-summary-remaining-label">OUTSTANDING PRINCIPAL</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="money-summary-remaining">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-hourglass-half"></i></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form -->
+                <div class="lg:col-span-1 mini-card" id="money-form-container">
+                    <h3 class="text-sm font-bold text-black border-b border-black pb-2 mb-4 uppercase tracking-widest" id="money-form-title">
+                        ADD ACCOUNT ENTRY
+                    </h3>
+                    
+                    <form id="money-form" onsubmit="saveLoan(event, 'money')">
+                        <input type="hidden" id="money-id">
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <label class="block font-bold text-black mb-1">BANK / LENDER</label>
+                                <input type="text" id="money-lender" required class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold text-black mb-1">PRINCIPAL (₱)</label>
+                                    <input type="number" id="money-principal" required min="0" step="0.01" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-black mb-1">MO. INTEREST (%)</label>
+                                    <input type="number" id="money-interest" required min="0" step="0.01" value="0" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-black mb-1">TENURE (MONTHS)</label>
+                                <input type="number" id="money-months" required min="1" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            
+                            <!-- Calculation Breakdown Card -->
+                            <div class="border border-black p-4 bg-stone-50">
+                                <p class="text-[10px] font-bold text-black uppercase tracking-wider mb-2 border-b border-black pb-1">CALCULATION ANALYSIS</p>
+                                <div class="space-y-1.5 mb-3 text-[11px]">
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Monthly Interest:</span>
+                                        <span class="font-bold text-black" id="money-calc-mi">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Total Interest Segment:</span>
+                                        <span class="font-bold text-black" id="money-calc-ti">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between pt-1 border-t border-dashed border-stone-300">
+                                        <span class="font-bold text-black">Total Payable:</span>
+                                        <span class="font-bold text-black" id="money-calc-tp">₱0.00</span>
+                                    </div>
+                                </div>
+                                <div class="border border-black p-3 bg-white flex justify-between items-center text-[11px]">
+                                    <span class="font-bold text-black">MO. AMORTIZATION</span>
+                                    <span class="font-bold text-black" id="money-calc-ma">₱0.00</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-black mb-1">DATE CREATED</label>
+                                <input type="date" id="money-date" required class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-black mb-1">MONTHS ALREADY PAID</label>
+                                <input type="number" id="money-paid" required min="0" value="0" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div class="pt-3 flex gap-2">
+                                <button type="submit" class="mini-btn flex-1 py-3">SAVE RECORD</button>
+                                <button type="button" onclick="resetForm('money')" class="mini-btn-secondary py-3 px-4">CLEAR</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- List -->
+                <div class="lg:col-span-2 space-y-4" id="money-list"></div>
+            </div>
+        </div>
+
+        <!-- ==================== APPLIANCES LOAN TAB ==================== -->
+        <div id="appliances" class="tab-content">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border border-black p-4 bg-stone-50">
+                <div>
+                    <h2 class="text-xl font-bold text-black uppercase tracking-wider flex items-center gap-2">
+                        APPLIANCE OBLIGATIONS <i class="fas fa-tv text-stone-400"></i>
+                    </h2>
+                    <p class="text-xs text-stone-500 mt-1">Home Credit installments, gadgets, and appliance systems.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button onclick="universalPay('appliances')" class="mini-btn-secondary text-xs px-4 py-2 flex-1 md:flex-none">
+                        <i class="fas fa-check-double mr-1"></i> PAY CURRENT DUE (1 MO)
+                    </button>
+                    <button onclick="requestCategoryPrepay('appliances')" class="mini-btn text-xs px-4 py-2 flex-1 md:flex-none">
+                        <i class="fas fa-piggy-bank mr-1"></i> PAY ALL REMAININGS
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projection Navigation Month Controller -->
+            <div class="border border-black p-4 mb-6 bg-stone-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="changeProjectionMonth('appliances', -1)" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        <i class="fas fa-chevron-left mr-1"></i> PREV MONTH
+                    </button>
+                    <button onclick="resetProjectionMonth('appliances')" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        CURRENT
+                    </button>
+                    <button onclick="changeProjectionMonth('appliances', 1)" class="mini-btn-secondary py-2 px-4 flex-1 text-xs font-bold">
+                        NEXT MONTH <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="text-center sm:text-right">
+                    <span class="text-[10px] font-bold text-stone-500 block tracking-widest uppercase">PROJECTION TARGET MONTH</span>
+                    <span class="font-bold text-black uppercase text-xs" id="appliances-projection-label">JULY 2026</span>
+                </div>
+            </div>
+
+            <!-- CATEGORY SUMMARY BOXES -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="appliances-summary-paid-label">PAID SO FAR</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="appliances-summary-paid">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-check-circle"></i></div>
+                </div>
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="appliances-summary-monthly-label">MONTHLY LIABILITY</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="appliances-summary-monthly">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-calendar-alt"></i></div>
+                </div>
+                <div class="border border-black p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider" id="appliances-summary-remaining-label">OUTSTANDING PRINCIPAL</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="appliances-summary-remaining">₱0.00</h4>
+                    </div>
+                    <div class="text-stone-300"><i class="fas fa-hourglass-half"></i></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form -->
+                <div class="lg:col-span-1 mini-card" id="appliances-form-container">
+                    <h3 class="text-sm font-bold text-black border-b border-black pb-2 mb-4 uppercase tracking-widest" id="appliances-form-title">
+                        ADD ACCOUNT ENTRY
+                    </h3>
+                    
+                    <form id="appliances-form" onsubmit="saveLoan(event, 'appliances')">
+                        <input type="hidden" id="appliances-id">
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <label class="block font-bold text-black mb-1">LENDER / BRAND (e.g. Home Credit)</label>
+                                <input type="text" id="appliances-lender" required class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-black mb-1">APPLIANCE / MODEL DETAILS</label>
+                                <input type="text" id="appliances-item" required class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold text-black mb-1">PRINCIPAL (₱)</label>
+                                    <input type="number" id="appliances-principal" required min="0" step="0.01" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-black mb-1">MO. INTEREST (%)</label>
+                                    <input type="number" id="appliances-interest" required min="0" step="0.01" value="0" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-black mb-1">TENURE (MONTHS)</label>
+                                <input type="number" id="appliances-months" required min="1" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+
+                            <!-- Calculation Breakdown Card -->
+                            <div class="border border-black p-4 bg-stone-50">
+                                <p class="text-[10px] font-bold text-black uppercase tracking-wider mb-2 border-b border-black pb-1">CALCULATION ANALYSIS</p>
+                                <div class="space-y-1.5 mb-3 text-[11px]">
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Monthly Interest:</span>
+                                        <span class="font-bold text-black" id="appliances-calc-mi">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-stone-500">Total Interest Segment:</span>
+                                        <span class="font-bold text-black" id="appliances-calc-ti">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between pt-1 border-t border-dashed border-stone-300">
+                                        <span class="font-bold text-black">Total Payable:</span>
+                                        <span class="font-bold text-black" id="appliances-calc-tp">₱0.00</span>
+                                    </div>
+                                </div>
+                                <div class="border border-black p-3 bg-white flex justify-between items-center text-[11px]">
+                                    <span class="font-bold text-black">MO. AMORTIZATION</span>
+                                    <span class="font-bold text-black" id="appliances-calc-ma">₱0.00</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-black mb-1">PURCHASE DATE</label>
+                                <input type="date" id="appliances-date" required class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-black mb-1">MONTHS ALREADY PAID</label>
+                                <input type="number" id="appliances-paid" required min="0" value="0" class="w-full bg-white border border-black text-black p-2.5 transition-colors">
+                            </div>
+                            <div class="pt-3 flex gap-2">
+                                <button type="submit" class="mini-btn flex-1 py-3">SAVE RECORD</button>
+                                <button type="button" onclick="resetForm('appliances')" class="mini-btn-secondary py-3 px-4">CLEAR</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- List -->
+                <div class="lg:col-span-2 space-y-4" id="appliances-list"></div>
+            </div>
+        </div>
+
+        <!-- ==================== ARCHIVE TAB ==================== -->
+        <div id="archive" class="tab-content">
+            <div class="mb-6 border border-black text-black p-6 bg-stone-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-xl font-bold uppercase tracking-wider flex items-center gap-2">
+                        SETTLED ARCHIVES <i class="fas fa-archive text-stone-400"></i>
+                    </h2>
+                    <p class="text-xs text-stone-500 mt-1">Logs for all fully settled accounts across categories.</p>
+                </div>
+                <!-- Archive Metrics -->
+                <div class="flex gap-4 w-full md:w-auto">
+                    <div class="border border-black bg-white p-4 flex-1 md:flex-none min-w-[140px]">
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest">SETTLED VALUE</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="archive-total-completed">₱0.00</h4>
+                    </div>
+                    <div class="border border-black bg-white p-4 flex-1 md:flex-none min-w-[120px]">
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest">SETTLED ITEMS</p>
+                        <h4 class="text-base font-bold text-black mt-1" id="archive-count">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List of Settled Loans -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn" id="archive-list">
+            </div>
+        </div>
+
+        <!-- ==================== CALCULATOR TAB ==================== -->
+        <div id="calculator" class="tab-content">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border border-black p-4 bg-stone-50">
+                <div>
+                    <h2 class="text-xl font-bold text-black uppercase tracking-wider flex items-center gap-2">
+                        OFFLINE SPREADSHEET <i class="fas fa-calculator text-stone-400"></i>
+                    </h2>
+                    <p class="text-xs text-stone-500 mt-1">Temporary matrix quick math (unlinked to your saved accounts).</p>
+                </div>
+            </div>
+
+            <!-- Spreadsheet Toolbar -->
+            <div class="flex flex-wrap gap-2 mb-4 border border-black p-2.5 bg-stone-100 items-center text-xs">
+                <button onclick="addCalcRow()" class="px-3 py-1.5 bg-white border border-black font-bold text-black hover:bg-black hover:text-white transition-colors"><i class="fas fa-plus mr-1"></i> ROW</button>
+                <button onclick="deleteCalcRow()" class="px-3 py-1.5 bg-white border border-black font-bold text-black hover:bg-black hover:text-white transition-colors"><i class="fas fa-minus mr-1"></i> ROW</button>
+                <div class="w-px h-6 bg-black mx-1"></div>
+                <button onclick="addCalcColumn()" class="px-3 py-1.5 bg-white border border-black font-bold text-black hover:bg-black hover:text-white transition-colors"><i class="fas fa-plus mr-1"></i> COLUMN</button>
+                <button onclick="deleteCalcColumn()" class="px-3 py-1.5 bg-white border border-black font-bold text-black hover:bg-black hover:text-white transition-colors"><i class="fas fa-minus mr-1"></i> COLUMN</button>
+                <div class="flex-grow"></div>
+                <button onclick="initCalculator()" class="px-3 py-1.5 bg-black text-white font-bold hover:bg-white hover:text-black transition-colors"><i class="fas fa-redo mr-1"></i> RESET SHEET</button>
+            </div>
+            
+            <div class="border border-black bg-white overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px] text-xs" id="calc-table">
+                        <thead>
+                            <tr class="bg-stone-100 border-b border-black">
+                                <th class="p-4 font-bold text-black w-1/4">ROW ID / DESCRIPTION</th>
+                                <th class="p-4 font-bold text-black">PRINCIPAL (₱)</th>
+                                <th class="p-4 font-bold text-black">MONTHS</th>
+                                <th class="p-4 font-bold text-black">MONTHLY (₱)</th>
+                                <th class="p-4 font-bold text-black text-right">TOTAL NET (₱)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calc-tbody" class="divide-y divide-stone-200">
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-black text-white font-bold">
+                                <td class="p-4 text-right uppercase tracking-wider">GRAND TOTALS:</td>
+                                <td class="p-4" id="calc-grand-amt">₱0.00</td>
+                                <td class="p-4"></td>
+                                <td class="p-4" id="calc-grand-monthly">₱0.00</td>
+                                <td class="p-4 text-right text-sm" id="calc-grand-total">₱0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== SYSTEM DIALOGS & OVERLAYS ==================== -->
+    <!-- Payment Confirmation Modal -->
+    <div id="payment-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden z-50 flex items-center justify-center">
+        <div class="bg-white border-2 border-black max-w-md w-full mx-4 overflow-hidden transform scale-100 animate-fadeIn" id="payment-modal-content">
+            <div class="bg-stone-100 p-6 text-center border-b border-black">
+                <i class="fas fa-file-invoice-dollar text-3xl text-black mb-2"></i>
+                <h3 class="text-lg font-bold text-black uppercase tracking-wider">RECORD PAYMENT</h3>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-stone-500 text-center mb-3 font-semibold" id="payment-desc-display">Applying standard period installment on account:</p>
+                <div class="text-2xl font-bold text-black text-center mb-6 py-4 border border-black bg-stone-50" id="payment-amount-display">₱0.00</div>
+                
+                <div class="flex gap-4">
+                    <button onclick="closePaymentModal()" class="flex-1 mini-btn-secondary py-3">CANCEL</button>
+                    <button id="confirm-payment-btn" class="flex-1 mini-btn py-3">CONFIRM</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Prepay Warning (Settle All Remaining) Modal -->
+    <div id="prepay-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden z-50 flex items-center justify-center">
+        <div class="bg-white border-2 border-black max-w-lg w-full mx-4 overflow-hidden transform scale-100" id="prepay-modal-content">
+            <div class="bg-stone-100 p-6 text-center border-b border-black">
+                <i class="fas fa-piggy-bank text-3xl text-black mb-2"></i>
+                <h3 class="text-lg font-bold text-black uppercase tracking-wider" id="prepay-title">EARLY PRE-TERMINATION</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="text-center">
+                    <p class="text-xs text-stone-600 font-bold">Settling remaining tenures saves overall flat interest segments.</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 border border-black p-4 bg-stone-50 text-xs">
+                    <div>
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-wider">GROSS REMAINING</p>
+                        <p class="text-sm font-bold text-black mt-1" id="prepay-gross-display">₱0.00</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-bold text-black uppercase tracking-wider">REBATE SAVINGS</p>
+                        <p class="text-sm font-bold text-black mt-1" id="prepay-rebate-display">₱0.00</p>
+                    </div>
+                </div>
+
+                <div class="border border-black p-3 text-[10px] text-black bg-stone-100 font-bold flex gap-3">
+                    <i class="fas fa-exclamation-triangle mt-0.5 text-black"></i>
+                    <span>NOTICE: This action will permanently settle all active records in this category. Please proceed if verified.</span>
+                </div>
+
+                <div class="py-3 border border-black bg-white text-center">
+                    <p class="text-[9px] font-bold text-stone-400 uppercase tracking-wider mb-1">TOTAL NET PAYOFF DUE</p>
+                    <div class="text-2xl font-bold text-black" id="prepay-payoff-display">₱0.00</div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="closePrepayModal()" class="flex-1 mini-btn-secondary py-3 text-xs">CANCEL</button>
+                    <button id="confirm-prepay-btn" class="flex-1 mini-btn py-3 text-xs">CONFIRM SETTLEMENT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom System Confirmation Modal (No browser alert/confirm blocks) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden z-[60] flex items-center justify-center p-4">
+        <div class="bg-white border-2 border-black max-w-sm w-full p-6 text-center">
+            <div id="confirm-icon" class="text-2xl mb-3 text-black"><i class="fas fa-exclamation-circle"></i></div>
+            <h3 class="text-sm font-bold text-black mb-2 uppercase tracking-widest" id="confirm-title">VERIFY ACTION</h3>
+            <p class="text-xs text-stone-500 mb-6" id="confirm-msg">Are you sure?</p>
+            <div class="flex gap-3 justify-center text-xs">
+                <button onclick="closeConfirmModal()" id="confirm-cancel-btn" class="mini-btn-secondary px-5 py-2">CANCEL</button>
+                <button id="confirm-action-btn" class="mini-btn px-5 py-2">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan Detail Invoice Modal -->
+    <div id="details-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white border-2 border-black max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 border-b border-black bg-stone-100">
+                <h3 class="text-xs font-bold text-black uppercase tracking-widest flex items-center gap-2">
+                    <i class="fas fa-file-alt"></i> ACCOUNT REPORT
+                </h3>
+                <button onclick="closeDetailsModal()" class="text-black bg-white border border-black hover:bg-black hover:text-white w-6 h-6 flex items-center justify-center"><i class="fas fa-times text-xs"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto bg-white" id="details-modal-body">
+            </div>
+            <div class="p-4 border-t border-black bg-stone-100 flex justify-end">
+                <button onclick="closeDetailsModal()" class="mini-btn py-2 px-5 text-xs">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Success Popup Overlay -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 z-[70]">
+        <div class="bg-black text-white border border-white px-5 py-3 text-xs tracking-wider font-bold shadow-lg flex items-center gap-3">
+            <i class="fas fa-info-circle"></i>
+            <span id="toast-message">Task completed.</span>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT SYSTEM ENGINE ==================== -->
+    <script>
+        const cleanItemName = (name) => {
+            if (!name) return "";
+            return name.replace(/[\s\xa0\u00a0]*Go to PDP Product Image[\s\xa0\u00a0]*/gi, "").trim();
+        };
+
+        let currentCombinedItems = [];
+
+        window.toggleLenderSelect = () => {
+            const selectVal = document.getElementById('shopping-lender-select').value;
+            const textInput = document.getElementById('shopping-lender');
+            if (selectVal === 'Other') {
+                textInput.classList.remove('hidden');
+                textInput.required = true;
+                textInput.focus();
+            } else {
+                textInput.classList.add('hidden');
+                textInput.required = false;
+                textInput.value = '';
+            }
+        };
+
+        window.toggleCombineSection = (forceVal) => {
+            const checkbox = document.getElementById('shopping-is-combined');
+            const section = document.getElementById('combine-section');
+            const isChecked = forceVal !== undefined ? forceVal : checkbox.checked;
+            
+            if (forceVal !== undefined) checkbox.checked = forceVal;
+
+            if (isChecked) {
+                section.classList.remove('hidden');
+                document.getElementById('shopping-final-price').required = true;
+            } else {
+                section.classList.add('hidden');
+                document.getElementById('shopping-final-price').required = false;
+            }
+            calculateCombinedDifference();
+        };
+
+        window.addCombinedSubItem = () => {
+            const nameInput = document.getElementById('sub-item-name');
+            const priceInput = document.getElementById('sub-item-price');
+            const name = nameInput.value.trim();
+            const price = parseFloat(priceInput.value);
+
+            if (!name || isNaN(price) || price < 0) {
+                showToast("Please enter a valid name and price.");
+                return;
+            }
+
+            currentCombinedItems.push({ name, price });
+            nameInput.value = '';
+            priceInput.value = '';
+            
+            renderCombinedFormItems();
+            calculateCombinedDifference();
+        };
+
+        window.deleteCombinedSubItem = (index) => {
+            currentCombinedItems.splice(index, 1);
+            renderCombinedFormItems();
+            calculateCombinedDifference();
+        };
+
+        window.renderCombinedFormItems = () => {
+            const list = document.getElementById('form-sub-items-list');
+            list.innerHTML = '';
+            currentCombinedItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "flex justify-between items-center text-[10px] bg-stone-100 p-1 border border-stone-200";
+                itemDiv.innerHTML = `
+                    <span class="truncate font-semibold uppercase">${item.name}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold">${formatMoney(item.price)}</span>
+                        <button type="button" onclick="deleteCombinedSubItem(${index})" class="text-stone-500 hover:text-black"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+                list.appendChild(itemDiv);
+            });
+        };
+
+        window.calculateCombinedDifference = () => {
+            const mainPrice = parseFloat(document.getElementById('shopping-price').value) || 0;
+            const subItemsSum = currentCombinedItems.reduce((acc, item) => acc + item.price, 0);
+            const totalCombined = mainPrice + subItemsSum;
+            
+            document.getElementById('form-total-combined').innerText = formatMoney(totalCombined);
+
+            const finalPriceInput = document.getElementById('shopping-final-price');
+            const finalPrice = parseFloat(finalPriceInput.value) || 0;
+            
+            // Auto-fill final price if not touched yet
+            if (finalPrice === 0 && totalCombined > 0) {
+                finalPriceInput.value = totalCombined.toFixed(2);
+            }
+
+            const activeFinalPrice = parseFloat(finalPriceInput.value) || totalCombined;
+            const difference = totalCombined - activeFinalPrice;
+
+            document.getElementById('form-combined-difference').innerText = formatMoney(difference);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const priceInput = document.getElementById('shopping-price');
+            if (priceInput) {
+                priceInput.addEventListener('input', calculateCombinedDifference);
+            }
+        });
+
+        // Set dynamic filter dates on initial load
+        const initialDate = new Date();
+        document.addEventListener('DOMContentLoaded', () => {
+            const mFilter = document.getElementById('expense-filter-month');
+            const yFilter = document.getElementById('expense-filter-year');
+            if (mFilter) mFilter.value = initialDate.getMonth();
+            if (yFilter) yFilter.value = initialDate.getFullYear();
+            
+            // Live stripping of Shopee image copy-paste artifacts
+            const shoppingItemInput = document.getElementById('shopping-item');
+            if (shoppingItemInput) {
+                shoppingItemInput.addEventListener('input', (e) => {
+                    e.target.value = cleanItemName(e.target.value);
+                });
+            }
+            renderData();
+        });
+
+        // Local state initialization
+        let loans = JSON.parse(localStorage.getItem('loanOrganizerData')) || [];
+        let isAlertsExpanded = false; 
+        let isFirstTimeExpanded = false; 
+        
+        // Projection State Tracking Dates per Tab Category
+        let projectionDates = {
+            shopping: new Date(),
+            money: new Date(),
+            appliances: new Date()
+        };
+
+        const saveToStorage = () => localStorage.setItem('loanOrganizerData', JSON.stringify(loans));
+        const formatMoney = (amount) => '₱' + parseFloat(amount).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        
+        const showToast = (message) => {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        };
+
+        const displayFlex = (elId) => {
+            const el = document.getElementById(elId);
+            if (el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            }
+        };
+
+        const hideElement = (elId) => {
+            const el = document.getElementById(elId);
+            if (el) {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
+        };
+
+        let confirmActionCb = null;
+        const showConfirm = (title, message, onConfirm, isAlert = false) => {
+            document.getElementById('confirm-title').innerText = title.toUpperCase();
+            document.getElementById('confirm-msg').innerText = message;
+            
+            const cancelBtn = document.getElementById('confirm-cancel-btn');
+            const icon = document.getElementById('confirm-icon');
+            
+            if (isAlert) {
+                cancelBtn.classList.add('hidden');
+                document.getElementById('confirm-action-btn').innerText = "OK";
+                icon.innerHTML = '<i class="fas fa-info-circle text-black"></i>';
+            } else {
+                cancelBtn.classList.remove('hidden');
+                document.getElementById('confirm-action-btn').innerText = "CONFIRM";
+                icon.innerHTML = '<i class="fas fa-exclamation-triangle text-black"></i>';
+            }
+
+            confirmActionCb = onConfirm;
+            displayFlex('confirm-modal');
+        };
+
+        const closeConfirmModal = () => {
+            hideElement('confirm-modal');
+            confirmActionCb = null;
+        };
+
+        document.getElementById('confirm-action-btn').addEventListener('click', () => {
+            if (confirmActionCb) confirmActionCb();
+            closeConfirmModal();
+        });
+
+        window.toggleAlertsList = () => {
+            isAlertsExpanded = !isAlertsExpanded;
+            const expandedList = document.getElementById('alerts-expanded-list');
+            const chevron = document.getElementById('alerts-chevron');
+            const labelText = document.getElementById('alerts-toggle-label');
+            if (expandedList) {
+                if (isAlertsExpanded) {
+                    expandedList.classList.remove('hidden');
+                    if(chevron) chevron.classList.add('rotate-180');
+                    if(labelText) labelText.innerText = "HIDE LIST";
+                } else {
+                    expandedList.classList.add('hidden');
+                    if(chevron) chevron.classList.remove('rotate-180');
+                    if(labelText) labelText.innerText = "VIEW LIST";
+                }
+            }
+        };
+
+        window.toggleFirstTimeList = () => {
+            isFirstTimeExpanded = !isFirstTimeExpanded;
+            const expandedList = document.getElementById('firsttime-expanded-list');
+            const chevron = document.getElementById('firsttime-chevron');
+            const labelText = document.getElementById('firsttime-toggle-label');
+            if (expandedList) {
+                if (isFirstTimeExpanded) {
+                    expandedList.classList.remove('hidden');
+                    if(chevron) chevron.classList.add('rotate-180');
+                    if(labelText) labelText.innerText = "HIDE LIST";
+                } else {
+                    expandedList.classList.add('hidden');
+                    if(chevron) chevron.classList.remove('rotate-180');
+                    if(labelText) labelText.innerText = "VIEW LIST";
+                }
+            }
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if(btn.dataset.target === tabId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            if (tabId !== 'calculator') {
+                renderData();
+            }
+        }
+
+        window.setShoppingFormMode = (mode) => {
+            const formModeInput = document.getElementById('shopping-form-mode');
+            if (!formModeInput) return;
+            formModeInput.value = mode;
+
+            const btnLoan = document.getElementById('toggle-type-loan');
+            const btnExpense = document.getElementById('toggle-type-expense');
+
+            const fieldLenderLabel = document.getElementById('label-shopping-lender');
+            const wrapperLenderInput = document.getElementById('wrapper-lender-input');
+            const wrapperShopSelect = document.getElementById('wrapper-shop-select');
+
+            const loanFields1 = document.getElementById('shopping-loan-fields-1');
+            const loanFields2 = document.getElementById('shopping-loan-fields-2');
+            const expenseFields = document.getElementById('shopping-expense-fields');
+            const calcCard = document.getElementById('shopping-calc-card');
+            const wrapperMonthsPaid = document.getElementById('wrapper-months-paid');
+
+            if (mode === 'expense') {
+                btnExpense.className = "py-1.5 text-[10px] font-bold text-center bg-black text-white";
+                btnLoan.className = "py-1.5 text-[10px] font-bold text-center text-black";
+
+                fieldLenderLabel.innerText = "ONLINE STORE";
+                wrapperLenderInput.classList.add('hidden');
+                wrapperShopSelect.classList.remove('hidden');
+
+                loanFields1.classList.add('hidden');
+                loanFields2.classList.add('hidden');
+                calcCard.classList.add('hidden');
+                wrapperMonthsPaid.classList.add('hidden');
+                expenseFields.classList.remove('hidden');
+
+                document.getElementById('shopping-lender-select').required = false;
+                document.getElementById('shopping-lender').required = false;
+                document.getElementById('shopping-principal').required = false;
+                document.getElementById('shopping-monthly').required = false;
+                document.getElementById('shopping-months').required = false;
+                document.getElementById('shopping-paid').required = false;
+                document.getElementById('shopping-price').required = true;
+            } else {
+                btnLoan.className = "py-1.5 text-[10px] font-bold text-center bg-black text-white";
+                btnExpense.className = "py-1.5 text-[10px] font-bold text-center text-black";
+
+                fieldLenderLabel.innerText = "LENDER / BRAND";
+                wrapperLenderInput.classList.remove('hidden');
+                wrapperShopSelect.classList.add('hidden');
+
+                loanFields1.classList.remove('hidden');
+                loanFields2.classList.remove('hidden');
+                calcCard.classList.remove('hidden');
+                wrapperMonthsPaid.classList.remove('hidden');
+                expenseFields.classList.add('hidden');
+
+                document.getElementById('shopping-lender-select').required = true;
+                toggleLenderSelect();
+                document.getElementById('shopping-principal').required = true;
+                document.getElementById('shopping-monthly').required = true;
+                document.getElementById('shopping-months').required = true;
+                document.getElementById('shopping-paid').required = true;
+                document.getElementById('shopping-price').required = false;
+            }
+            triggerCalc('shopping');
+        };
+
+        function triggerCalc(type) {
+            if (type === 'shopping') {
+                const formMode = document.getElementById('shopping-form-mode')?.value || 'loan';
+                if (formMode === 'expense') return;
+
+                const pInput = document.getElementById('shopping-principal');
+                const mInput = document.getElementById('shopping-months');
+                const moInput = document.getElementById('shopping-monthly');
+                const pfInput = document.getElementById('shopping-processing-fee');
+
+                const p = parseFloat(pInput?.value) || 0;
+                const m = parseInt(mInput?.value) || 0;
+                const mo = parseFloat(moInput?.value) || 0;
+                const pf = parseFloat(pfInput?.value) || 0;
+
+                if (p > 0 && m > 0 && mo > 0) {
+                    const totalPayment = mo * m;
+                    const netLoan = totalPayment - pf;
+                    const interestAmount = netLoan - p;
+                    const interestPctTotal = p > 0 ? (interestAmount / p) * 100 : 0;
+                    const interestPctMonth = m > 0 ? interestPctTotal / m : 0;
+                    const monthlyInterestTotal = interestAmount;
+                    const monthlyInterestPerMonth = m > 0 ? interestAmount / m : 0;
+
+                    document.getElementById('shopping-calc-total-payment').innerText = formatMoney(totalPayment);
+                    document.getElementById('shopping-calc-net-loan').innerText = formatMoney(netLoan);
+                    document.getElementById('shopping-calc-interest-amount').innerText = formatMoney(interestAmount);
+                    document.getElementById('shopping-calc-interest-pct-total').innerText = interestPctTotal.toFixed(2) + '%';
+                    document.getElementById('shopping-calc-interest-pct-month').innerText = interestPctMonth.toFixed(2) + '%';
+                    document.getElementById('shopping-calc-monthly-interest-total').innerText = formatMoney(monthlyInterestTotal);
+                    document.getElementById('shopping-calc-monthly-interest-per-month').innerText = formatMoney(monthlyInterestPerMonth);
+                } else {
+                    document.getElementById('shopping-calc-total-payment').innerText = '₱0.00';
+                    document.getElementById('shopping-calc-net-loan').innerText = '₱0.00';
+                    document.getElementById('shopping-calc-interest-amount').innerText = '₱0.00';
+                    document.getElementById('shopping-calc-interest-pct-total').innerText = '0.00%';
+                    document.getElementById('shopping-calc-interest-pct-month').innerText = '0.00%';
+                    document.getElementById('shopping-calc-monthly-interest-total').innerText = '₱0.00';
+                    document.getElementById('shopping-calc-monthly-interest-per-month').innerText = '₱0.00';
+                }
+            } else {
+                const pInput = document.getElementById(`${type}-principal`);
+                const mInput = document.getElementById(`${type}-months`);
+                const iInput = document.getElementById(`${type}-interest`);
+                
+                const p = parseFloat(pInput?.value) || 0;
+                const m = parseInt(mInput?.value) || 0;
+                const ir = parseFloat(iInput?.value) || 0;
+
+                if (p > 0 && m > 0) {
+                    const monthlyInterest = p * (ir / 100);
+                    const totalInterest = monthlyInterest * m;
+                    const totalPayable = p + totalInterest;
+                    const monthlyAmortization = totalPayable / m;
+
+                    const elMI = document.getElementById(`${type}-calc-mi`);
+                    const elTI = document.getElementById(`${type}-calc-ti`);
+                    const elTP = document.getElementById(`${type}-calc-tp`);
+                    const elMA = document.getElementById(`${type}-calc-ma`);
+                    
+                    if (elMI) elMI.innerText = formatMoney(monthlyInterest);
+                    if (elTI) elTI.innerText = formatMoney(totalInterest);
+                    if (elTP) elTP.innerText = formatMoney(totalPayable);
+                    if (elMA) elMA.innerText = formatMoney(monthlyAmortization);
+                } else {
+                    const elMI = document.getElementById(`${type}-calc-mi`);
+                    const elTI = document.getElementById(`${type}-calc-ti`);
+                    const elTP = document.getElementById(`${type}-calc-tp`);
+                    const elMA = document.getElementById(`${type}-calc-ma`);
+                    
+                    if (elMI) elMI.innerText = '₱0.00';
+                    if (elTI) elTI.innerText = '₱0.00';
+                    if (elTP) elTP.innerText = '₱0.00';
+                    if (elMA) elMA.innerText = '₱0.00';
+                }
+            }
+        }
+
+        ['shopping', 'money', 'appliances'].forEach(type => {
+            const listToBind = type === 'shopping' 
+                ? ['shopping-principal', 'shopping-months', 'shopping-monthly', 'shopping-processing-fee', 'shopping-price']
+                : [`${type}-principal`, `${type}-months`, `${type}-interest`];
+            
+            listToBind.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', () => triggerCalc(type));
+            });
+        });
+
+        function getProjectedInstallmentInfo(loan, targetYear, targetMonth) {
+            if (loan.type === 'expense') return { isActive: false, installmentNum: 0, projectedDueDate: null };
+            
+            const start = new Date(loan.date);
+            const totalMonths = parseInt(loan.months);
+            
+            for (let k = 1; k <= totalMonths; k++) {
+                let instDueDate;
+                if (loan.type === 'shopping') {
+                    let baseMonth = start.getMonth() + 1;
+                    if (start.getDate() >= 25) {
+                        baseMonth += 1;
+                    }
+                    instDueDate = new Date(start.getFullYear(), baseMonth + k - 1, 5);
+                } else {
+                    instDueDate = new Date(start.getFullYear(), start.getMonth() + k, start.getDate());
+                }
+                
+                if (instDueDate.getFullYear() === targetYear && instDueDate.getMonth() === targetMonth) {
+                    return {
+                        isActive: true,
+                        installmentNum: k,
+                        projectedDueDate: instDueDate
+                    };
+                }
+            }
+            
+            return {
+                isActive: false,
+                installmentNum: 0,
+                projectedDueDate: null
+            };
+        }
+
+        window.changeProjectionMonth = (type, offset) => {
+            const current = projectionDates[type];
+            projectionDates[type] = new Date(current.getFullYear(), current.getMonth() + offset, 1);
+            renderData();
+        };
+        
+        window.resetProjectionMonth = (type) => {
+            projectionDates[type] = new Date();
+            renderData();
+        };
+
+        function getNextDueDate(dateStr, monthsPaid, type) {
+            const date = new Date(dateStr);
+            let nextDue = new Date(date);
+            
+            if (type === 'shopping') {
+                let baseMonth = date.getMonth() + 1; 
+                if (date.getDate() >= 25) {
+                    baseMonth += 1; 
+                }
+                nextDue = new Date(date.getFullYear(), baseMonth + parseInt(monthsPaid), 5);
+            } else {
+                nextDue = new Date(date.getFullYear(), date.getMonth() + 1 + parseInt(monthsPaid), date.getDate());
+            }
+            return nextDue;
+        }
+
+        function getFinishDate(dateStr, totalMonths, type) {
+            const date = new Date(dateStr);
+            if (type === 'shopping') {
+                let baseMonth = date.getMonth() + 1;
+                if (date.getDate() >= 25) baseMonth += 1;
+                return new Date(date.getFullYear(), baseMonth + parseInt(totalMonths) - 1, 5);
+            } else {
+                return new Date(date.getFullYear(), date.getMonth() + parseInt(totalMonths), date.getDate());
+            }
+        }
+
+        function getDaysUntil(date) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const target = new Date(date);
+            target.setHours(0,0,0,0);
+            return Math.floor((target - today) / (1000 * 60 * 60 * 24));
+        }
+
+        function calculateRebate(loan) {
+            if (loan.type === 'expense') return 0;
+            const monthsRemaining = parseInt(loan.months) - parseInt(loan.paid);
+            if (monthsRemaining <= 1) return 0; 
+            
+            if (loan.type === 'shopping') {
+                const interestAmount = parseFloat(loan.amount) - parseFloat(loan.principal) - (parseFloat(loan.processingFee) || 0);
+                const interestPerMonth = interestAmount / parseInt(loan.months);
+                return Math.max(0, (monthsRemaining - 1) * interestPerMonth);
+            } else {
+                const monthlyInterest = parseFloat(loan.principal) * (parseFloat(loan.interestRate || 0) / 100);
+                return Math.max(0, (monthsRemaining - 1) * monthlyInterest);
+            }
+        }
+
+        function saveLoan(e, type) {
+            e.preventDefault();
+            const formMode = document.getElementById('shopping-form-mode')?.value || 'loan';
+            const idInput = document.getElementById(`${type}-id`).value;
+            
+            let loanData = {};
+
+            if (type === 'shopping' && formMode === 'expense') {
+                const isCombined = document.getElementById('shopping-is-combined').checked;
+                let finalPrice = parseFloat(document.getElementById('shopping-price').value) || 0;
+                
+                // Smart fallback: Auto-collect typed but unsaved subitems
+                const leftoverSubName = document.getElementById('sub-item-name')?.value.trim();
+                const leftoverSubPrice = parseFloat(document.getElementById('sub-item-price')?.value);
+                if (isCombined && leftoverSubName && !isNaN(leftoverSubPrice) && leftoverSubPrice >= 0) {
+                    currentCombinedItems.push({ name: leftoverSubName, price: leftoverSubPrice });
+                    document.getElementById('sub-item-name').value = '';
+                    document.getElementById('sub-item-price').value = '';
+                }
+
+                if (isCombined) {
+                    finalPrice = parseFloat(document.getElementById('shopping-final-price').value) || 0;
+                    const mainItemPrice = parseFloat(document.getElementById('shopping-price').value) || 0;
+                    const subItemsSum = currentCombinedItems.reduce((acc, item) => acc + item.price, 0);
+                    const totalCombinedPrice = mainItemPrice + subItemsSum;
+                    
+                    if (finalPrice === 0) finalPrice = totalCombinedPrice;
+                    const difference = totalCombinedPrice - finalPrice;
+
+                    loanData = {
+                        type: 'expense',
+                        lender: document.getElementById('shopping-shop').value,
+                        item: cleanItemName(document.getElementById('shopping-item').value),
+                        amount: finalPrice,
+                        principal: finalPrice,
+                        date: document.getElementById('shopping-date').value,
+                        months: 1,
+                        monthly: finalPrice,
+                        paid: 1,
+                        isCombined: true,
+                        mainItemPrice: mainItemPrice,
+                        subItems: [...currentCombinedItems],
+                        totalCombinedPrice: totalCombinedPrice,
+                        difference: difference
+                    };
+                } else {
+                    loanData = {
+                        type: 'expense',
+                        lender: document.getElementById('shopping-shop').value,
+                        item: cleanItemName(document.getElementById('shopping-item').value),
+                        amount: finalPrice,
+                        principal: finalPrice,
+                        date: document.getElementById('shopping-date').value,
+                        months: 1,
+                        monthly: finalPrice,
+                        paid: 1,
+                        isCombined: false
+                    };
+                }
+            } else if (type === 'shopping' && formMode === 'loan') {
+                const principal = parseFloat(document.getElementById('shopping-principal').value) || 0;
+                const processingFee = parseFloat(document.getElementById('shopping-processing-fee').value) || 0;
+                const monthlyAmortization = parseFloat(document.getElementById('shopping-monthly').value) || 0;
+                const months = parseInt(document.getElementById('shopping-months').value) || 0;
+                const totalPayable = monthlyAmortization * months;
+                
+                const netLoan = totalPayable - processingFee;
+                const interestAmount = netLoan - principal;
+                const interestPctTotal = principal > 0 ? (interestAmount / principal) * 100 : 0;
+                const interestRate = months > 0 ? interestPctTotal / months : 0;
+
+                let selectedLender = document.getElementById('shopping-lender-select').value;
+                if (selectedLender === 'Other') {
+                    selectedLender = document.getElementById('shopping-lender').value;
+                }
+
+                loanData = {
+                    type: 'shopping',
+                    lender: selectedLender,
+                    item: cleanItemName(document.getElementById('shopping-item').value),
+                    principal: principal,
+                    processingFee: processingFee,
+                    interestRate: interestRate,
+                    amount: totalPayable,
+                    date: document.getElementById('shopping-date').value,
+                    months: months,
+                    monthly: monthlyAmortization,
+                    paid: parseInt(document.getElementById('shopping-paid').value)
+                };
+            } else {
+                const principal = parseFloat(document.getElementById(`${type}-principal`).value) || 0;
+                const interestRate = parseFloat(document.getElementById(`${type}-interest`).value) || 0;
+                const months = parseInt(document.getElementById(`${type}-months`).value) || 0;
+                
+                const monthlyInterest = principal * (interestRate / 100);
+                const totalInterest = monthlyInterest * months;
+                const totalPayable = principal + totalInterest;
+                const monthlyAmortization = totalPayable / months;
+
+                loanData = {
+                    type: type,
+                    lender: document.getElementById(`${type}-lender`).value,
+                    item: document.getElementById(`${type}-item`) ? document.getElementById(`${type}-item`).value : '',
+                    principal: principal,
+                    processingFee: 0,
+                    interestRate: interestRate,
+                    amount: totalPayable,
+                    date: document.getElementById(`${type}-date`).value,
+                    months: months,
+                    monthly: monthlyAmortization,
+                    paid: parseInt(document.getElementById(`${type}-paid`).value)
+                };
+            }
+
+            if (idInput) {
+                const index = loans.findIndex(l => l.id === idInput);
+                if (index > -1) {
+                    loans[index] = { ...loans[index], ...loanData };
+                    showToast('RECORD UPDATED.');
+                }
+            } else {
+                loanData.id = Date.now().toString();
+                loans.push(loanData);
+                showToast('RECORD CREATED.');
+            }
+
+            saveToStorage();
+            resetForm(type);
+            renderData();
+        }
+
+        window.editLoan = (id, type) => {
+            const loan = loans.find(l => l.id === id);
+            if (!loan) return;
+            
+            document.getElementById(`${type}-id`).value = loan.id;
+            
+            if (type === 'shopping') {
+                if (loan.type === 'expense') {
+                    setShoppingFormMode('expense');
+                    document.getElementById('shopping-shop').value = loan.lender;
+                    document.getElementById('shopping-item').value = cleanItemName(loan.item);
+                    
+                    if (loan.isCombined) {
+                        document.getElementById('shopping-is-combined').checked = true;
+                        toggleCombineSection(true);
+                        document.getElementById('shopping-price').value = loan.mainItemPrice;
+                        currentCombinedItems = [...(loan.subItems || [])];
+                        document.getElementById('shopping-final-price').value = loan.amount;
+                        renderCombinedFormItems();
+                        calculateCombinedDifference();
+                    } else {
+                        document.getElementById('shopping-is-combined').checked = false;
+                        toggleCombineSection(false);
+                        document.getElementById('shopping-price').value = loan.amount;
+                        currentCombinedItems = [];
+                        document.getElementById('shopping-final-price').value = '';
+                        renderCombinedFormItems();
+                    }
+                } else {
+                    setShoppingFormMode('shopping');
+                    setShoppingFormMode('loan');
+                    
+                    const selectEl = document.getElementById('shopping-lender-select');
+                    const textEl = document.getElementById('shopping-lender');
+                    
+                    if (['Shopee SPayLater', 'LazPayLater', 'TikTok Pay Later'].includes(loan.lender)) {
+                        selectEl.value = loan.lender;
+                        textEl.classList.add('hidden');
+                        textEl.required = false;
+                        textEl.value = '';
+                    } else {
+                        selectEl.value = 'Other';
+                        textEl.classList.remove('hidden');
+                        textEl.required = true;
+                        textEl.value = loan.lender;
+                    }
+
+                    document.getElementById('shopping-item').value = cleanItemName(loan.item);
+                    document.getElementById('shopping-principal').value = loan.principal !== undefined ? loan.principal : loan.amount;
+                    document.getElementById('shopping-processing-fee').value = loan.processingFee || 0;
+                    document.getElementById('shopping-monthly').value = loan.monthly || 0;
+                    document.getElementById('shopping-months').value = loan.months || 0;
+                    document.getElementById('shopping-paid').value = loan.paid;
+                }
+                document.getElementById('shopping-date').value = loan.date;
+            } else {
+                document.getElementById(`${type}-lender`).value = loan.lender;
+                if(document.getElementById(`${type}-item`)) document.getElementById(`${type}-item`).value = loan.item;
+                document.getElementById(`${type}-principal`).value = loan.principal !== undefined ? loan.principal : loan.amount;
+                document.getElementById(`${type}-interest`).value = loan.interestRate || 0;
+                document.getElementById(`${type}-months`).value = loan.months;
+                document.getElementById(`${type}-date`).value = loan.date;
+                document.getElementById(`${type}-paid`).value = loan.paid;
+            }
+            
+            triggerCalc(type); 
+            
+            document.getElementById(`${type}-form-title`).innerText = `EDIT ENTRY`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.deleteLoan = (id) => {
+            showConfirm("DELETE RECORD", "This action will permanently delete this record. Proceed?", () => {
+                loans = loans.filter(l => l.id !== id);
+                saveToStorage();
+                showToast('RECORD DELETED.');
+                renderData();
+            });
+        };
+
+        function resetForm(type) {
+            document.getElementById(`${type}-form`).reset();
+            document.getElementById(`${type}-id`).value = '';
+            document.getElementById(`${type}-form-title`).innerText = `ADD ACCOUNT ENTRY`;
+            if (type === 'shopping') {
+                setShoppingFormMode('loan');
+                currentCombinedItems = [];
+                const combinedCheckbox = document.getElementById('shopping-is-combined');
+                if (combinedCheckbox) combinedCheckbox.checked = false;
+                toggleCombineSection(false);
+            }
+            triggerCalc(type); 
+        }
+
+        let hasExecutedPayment = false; 
+
+        function openPaymentModal() {
+            hasExecutedPayment = false; 
+            displayFlex('payment-modal');
+        }
+
+        function closePaymentModal() {
+            hideElement('payment-modal');
+        }
+
+        window.requestPayment = (id) => {
+            const loan = loans.find(l => l.id === id);
+            if (!loan) return;
+            if (loan.paid >= loan.months) {
+                showToast("ALREADY FULLY PAID.");
+                return;
+            }
+            
+            document.getElementById('payment-amount-display').innerText = formatMoney(loan.monthly);
+            document.getElementById('payment-desc-display').innerText = `Recording 1 period payment for ${loan.lender}${loan.item ? ' ('+loan.item+')' : ''}.`;
+            
+            const actionBtn = document.getElementById('confirm-payment-btn');
+            actionBtn.onclick = () => {
+                if (hasExecutedPayment) return;
+                hasExecutedPayment = true;
+                
+                try {
+                    const idx = loans.findIndex(l => l.id === id);
+                    loans[idx].paid += 1;
+                    saveToStorage();
+                    closePaymentModal();
+                    renderData();
+                    showToast('PAYMENT RECORDED SUCCESSFULLY!');
+                } catch(e) {
+                    console.error("Payment failure:", e);
+                    showToast("ERROR RECORDING TRANSACTION.");
+                }
+            };
+            
+            openPaymentModal();
+        };
+
+        window.universalPay = (type) => {
+            const activeLoans = loans.filter(l => l.type === type && l.paid < l.months);
+            if(activeLoans.length === 0) {
+                showToast(`NO ACTIVE ${type.toUpperCase()} LOANS.`);
+                return;
+            }
+
+            let loansToPay = activeLoans;
+            let titleText = `ALL ${activeLoans.length} active ${type}`;
+
+            if (type === 'shopping') {
+                const earliestTime = Math.min(...activeLoans.map(l => getNextDueDate(l.date, l.paid, l.type).getTime()));
+                loansToPay = activeLoans.filter(l => getNextDueDate(l.date, l.paid, l.type).getTime() === earliestTime);
+                
+                if (loansToPay.length < activeLoans.length) {
+                    titleText = `${loansToPay.length} CURRENT due ${type} (Skipping Standby)`;
+                }
+            }
+            
+            const totalAmount = loansToPay.reduce((sum, l) => sum + l.monthly, 0);
+            
+            document.getElementById('payment-amount-display').innerText = formatMoney(totalAmount);
+            document.getElementById('payment-desc-display').innerText = `Recording 1 period payment for ${titleText} accounts simultaneously.`;
+            
+            const actionBtn = document.getElementById('confirm-payment-btn');
+            actionBtn.onclick = () => {
+                if (hasExecutedPayment) return;
+                hasExecutedPayment = true;
+                
+                try {
+                    const idsToPay = loansToPay.map(l => l.id);
+                    loans = loans.map(l => {
+                        if (idsToPay.includes(l.id)) {
+                            return { ...l, paid: l.paid + 1 };
+                        }
+                        return l;
+                    });
+                    saveToStorage();
+                    closePaymentModal();
+                    renderData();
+                    showToast('BATCH PAYMENT REGISTERED SUCCESSFULLY!');
+                } catch (err) {
+                    console.error("Batch payment processing failure:", err);
+                    showToast("FAILED TO PROCESS BATCH TRANSACTION.");
+                }
+            };
+            
+            openPaymentModal();
+        };
+
+        let hasExecutedPrepay = false;
+
+        function openPrepayModal() {
+            hasExecutedPrepay = false; 
+            displayFlex('prepay-modal');
+        }
+
+        function closePrepayModal() {
+            hideElement('prepay-modal');
+        }
+
+        window.requestCategoryPrepay = (type) => {
+            const targetLoans = loans.filter(l => l.type === type && l.paid < l.months);
+            if (targetLoans.length === 0) {
+                showToast(`NO OUTSTANDING ACTIVE ACCOUNTS IN ${type.toUpperCase()}.`);
+                return;
+            }
+
+            let totalRemainingGross = 0;
+            let totalRebate = 0;
+
+            targetLoans.forEach(loan => {
+                const remainingBal = parseFloat(loan.amount) - (parseFloat(loan.monthly) * parseInt(loan.paid));
+                const rebate = calculateRebate(loan);
+                totalRemainingGross += remainingBal;
+                totalRebate += rebate;
+            });
+
+            const netPayoff = Math.max(0, totalRemainingGross - totalRebate);
+
+            document.getElementById('prepay-title').innerText = `PAY ALL REMAININGS (${type.toUpperCase()})`;
+            document.getElementById('prepay-gross-display').innerText = formatMoney(totalRemainingGross);
+            document.getElementById('prepay-rebate-display').innerText = formatMoney(totalRebate);
+            document.getElementById('prepay-payoff-display').innerText = formatMoney(netPayoff);
+
+            const confirmBtn = document.getElementById('confirm-prepay-btn');
+            confirmBtn.onclick = () => {
+                if (hasExecutedPrepay) return;
+                hasExecutedPrepay = true;
+
+                try {
+                    const idsToClose = targetLoans.map(l => l.id);
+                    loans = loans.map(l => {
+                        if (idsToClose.includes(l.id)) {
+                            return { ...l, paid: l.months }; 
+                        }
+                        return l;
+                    });
+                    
+                    saveToStorage();
+                    closePrepayModal();
+                    renderData();
+                    showToast(`SETTLEMENT SEQUENCE COMPLETE! ALL ${type.toUpperCase()} CLOSED.`);
+                } catch(e) {
+                    console.error("Prepay error:", e);
+                    showToast("ERROR EXECUTING PRE-TERMINATION DUMP.");
+                }
+            };
+
+            openPrepayModal();
+        };
+
+        window.openDetails = (id) => {
+            const loan = loans.find(l => l.id === id);
+            if (!loan) return;
+            
+            const isExpense = loan.type === 'expense';
+            const isDone = loan.paid >= loan.months;
+            const nextDue = getNextDueDate(loan.date, loan.paid, loan.type);
+            const finishDate = getFinishDate(loan.date, loan.months, loan.type);
+            const totalPaidAmount = loan.monthly * loan.paid;
+            const remainingAmount = loan.amount - totalPaidAmount;
+            const progress = Math.min((loan.paid / loan.months) * 100, 100).toFixed(1);
+            
+            const icon = isExpense ? 'fa-shopping-bag' : (loan.type === 'shopping' ? 'fa-box-open' : loan.type === 'money' ? 'fa-money-bill-wave' : 'fa-tv');
+            
+            let extraShoppingDetails = '';
+            if (loan.type === 'shopping' && loan.processingFee !== undefined) {
+                extraShoppingDetails = `
+                    <div class="border-b border-stone-200 py-1 flex justify-between">
+                        <span class="text-stone-400">Processing Fee:</span>
+                        <span class="font-bold text-stone-700">${formatMoney(loan.processingFee)}</span>
+                    </div>
+                    <div class="border-b border-stone-200 py-1 flex justify-between">
+                        <span class="text-stone-400">Net Loan Balance:</span>
+                        <span class="font-bold text-stone-800">${formatMoney(loan.amount - loan.processingFee)}</span>
+                    </div>
+                `;
+            }
+
+            let detailContent = '';
+            if (isExpense) {
+                let combineBreakdownHTML = '';
+                if (loan.isCombined && loan.subItems) {
+                    combineBreakdownHTML = `
+                        <div class="border border-black p-4 mt-4 bg-stone-50">
+                            <p class="text-[9px] font-bold text-black uppercase tracking-widest mb-2 border-b border-black pb-1">COMBINED ITEMS BREAKDOWN</p>
+                            <div class="space-y-1.5 text-xs">
+                                <div class="flex justify-between font-bold border-b border-dashed border-stone-300 pb-1.5">
+                                    <span class="uppercase">${loan.item} (Main Item)</span>
+                                    <span>${formatMoney(loan.mainItemPrice)}</span>
+                                </div>
+                    `;
+                    loan.subItems.forEach(sub => {
+                        combineBreakdownHTML += `
+                            <div class="flex justify-between py-1 border-b border-dashed border-stone-200">
+                                <span class="text-stone-600 uppercase">${sub.name}</span>
+                                <span>${formatMoney(sub.price)}</span>
+                            </div>
+                        `;
+                    });
+                    combineBreakdownHTML += `
+                                <div class="border-t border-dashed border-stone-300 pt-1.5 flex justify-between font-bold text-stone-500">
+                                    <span>Total Combined Price:</span>
+                                    <span>${formatMoney(loan.totalCombinedPrice)}</span>
+                                </div>
+                                <div class="flex justify-between font-bold text-black">
+                                    <span>Final Price (Paid):</span>
+                                    <span>${formatMoney(loan.amount)}</span>
+                                </div>
+                                <div class="border-t border-black pt-1.5 flex justify-between font-bold text-black">
+                                    <span>Savings (Difference):</span>
+                                    <span class="text-emerald-700">${formatMoney(loan.difference)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                detailContent = `
+                    <div class="space-y-1">
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Merchant Store:</span>
+                            <span class="font-bold">${loan.lender}</span>
+                        </div>
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Item Description:</span>
+                            <span class="font-bold">${loan.item}</span>
+                        </div>
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Transaction Date:</span>
+                            <span class="font-bold">${new Date(loan.date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="border-b border-stone-200 py-2 flex justify-between text-base border-t border-black mt-2">
+                            <span class="text-black font-bold">Total Expense Cost:</span>
+                            <span class="font-bold text-black">${formatMoney(loan.amount)}</span>
+                        </div>
+                    </div>
+                    ${combineBreakdownHTML}
+                    <div class="border border-black p-4 flex flex-col items-center justify-center gap-1 bg-stone-50 text-stone-600 font-bold mt-4">
+                        <i class="fas fa-check-circle text-lg text-black mb-1"></i>
+                        <span class="text-xs uppercase tracking-widest">ONE TIME TRANSACTION</span>
+                    </div>
+                `;
+            } else {
+                detailContent = `
+                    <div class="space-y-1">
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Principal Balance:</span>
+                            <span class="font-bold">${formatMoney(loan.principal !== undefined ? loan.principal : loan.amount)}</span>
+                        </div>
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Monthly Interest Rate:</span>
+                            <span class="font-bold">${(loan.interestRate || 0).toFixed(2)}%</span>
+                        </div>
+                        ${extraShoppingDetails}
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Total Liability Settle:</span>
+                            <span class="font-bold">${formatMoney(loan.amount)}</span>
+                        </div>
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-black font-bold">Standard Amortization:</span>
+                            <span class="font-bold text-black">${formatMoney(loan.monthly)}</span>
+                        </div>
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Initialization Stamp:</span>
+                            <span class="font-bold text-stone-600">${new Date(loan.date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="border-b border-stone-200 py-1 flex justify-between">
+                            <span class="text-stone-400">Projection Final Date:</span>
+                            <span class="font-bold text-stone-600">${finishDate.toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-black p-4 mt-4">
+                        <div class="flex justify-between text-xs mb-2 font-bold">
+                            <span>Settled Progress (${loan.paid}/${loan.months} mo)</span>
+                            <span>${progress}%</span>
+                        </div>
+                        <div class="w-full bg-white border border-black h-4 overflow-hidden relative">
+                            <div class="bg-black h-full progress-bar-minimal" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-[10px] font-bold">
+                            <span>Paid Total: ${formatMoney(totalPaidAmount)}</span>
+                            <span>Remaining: ${formatMoney(remainingAmount)}</span>
+                        </div>
+                    </div>
+
+                    ${!isDone ? `
+                        <div class="border border-black p-4 flex items-center gap-4 bg-stone-50 mt-4">
+                            <div class="bg-white p-2 border border-black text-black"><i class="fas fa-calendar-day"></i></div>
+                            <div>
+                                <p class="text-[9px] text-stone-500 font-bold uppercase tracking-wider">Projected Next Due Date</p>
+                                <p class="text-sm font-bold text-black mt-0.5">${nextDue.toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="border border-black p-4 flex flex-col items-center justify-center gap-1 bg-stone-50 text-stone-600 font-bold mt-4">
+                            <i class="fas fa-check-circle text-lg text-black mb-1"></i>
+                            <span class="text-xs uppercase tracking-widest">RECORD CLOSED</span>
+                        </div>
+                    `}
+                `;
+            }
+
+            const html = `
+                <div class="space-y-6 text-xs text-black">
+                    <div class="text-center border-b border-black pb-4">
+                        <div class="inline-flex p-3 border border-black mb-2 text-xl text-black">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <h4 class="text-lg font-bold uppercase">${loan.lender}</h4>
+                        ${loan.item ? `<p class="text-stone-500 font-bold mt-1 uppercase">${loan.item}</p>` : ''}
+                    </div>
+                    ${detailContent}
+                </div>
+            `;
+            
+            document.getElementById('details-modal-body').innerHTML = html;
+            displayFlex('details-modal');
+        };
+
+        window.closeDetailsModal = () => {
+            hideElement('details-modal');
+        };
+
+        function renderArchive() {
+            const archiveList = document.getElementById('archive-list');
+            if(!archiveList) return;
+            archiveList.innerHTML = '';
+
+            const completedLoans = loans.filter(l => l.type !== 'expense' && l.paid >= l.months);
+
+            let totalCompletedAmt = 0;
+            
+            if (completedLoans.length === 0) {
+                archiveList.className = "col-span-full";
+                archiveList.innerHTML = `
+                    <div class="text-center py-12 border border-dashed border-black bg-stone-50 max-w-lg mx-auto">
+                        <i class="fas fa-archive text-3xl mb-3 text-stone-400"></i>
+                        <p class="font-bold text-sm text-stone-600 uppercase tracking-wider">Archive is empty.</p>
+                        <p class="text-xs mt-1 text-stone-500">Fully closed accounts will automatically route here.</p>
+                    </div>`;
+                document.getElementById('archive-total-completed').innerText = formatMoney(0);
+                document.getElementById('archive-count').innerText = 0;
+                return;
+            }
+
+            archiveList.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+
+            completedLoans.forEach(loan => {
+                totalCompletedAmt += parseFloat(loan.amount);
+                const start = new Date(loan.date);
+                const finish = getFinishDate(loan.date, loan.months, loan.type);
+                
+                const startStr = start.toLocaleDateString();
+                const finishStr = finish.toLocaleDateString();
+
+                const icon = loan.type === 'shopping' ? 'fa-box-open' : loan.type === 'money' ? 'fa-money-bill-wave' : 'fa-tv';
+
+                const card = document.createElement('div');
+                card.className = "mini-card cursor-pointer opacity-80 hover:opacity-100 transition-opacity";
+                card.onclick = () => openDetails(loan.id);
+
+                let headerTitle = loan.lender.toUpperCase();
+                if (loan.type !== 'shopping') {
+                    headerTitle = `${loan.lender.toUpperCase()} (${startStr} - ${finishStr})`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4 text-xs">
+                        <div class="flex items-center gap-3">
+                            <div class="text-black p-2 border border-black flex items-center justify-center"><i class="fas ${icon}"></i></div>
+                            <div>
+                                <h4 class="font-bold text-sm text-black leading-tight">${headerTitle}</h4>
+                                ${loan.item ? `<p class="text-stone-500 font-bold text-[10px] mt-0.5 uppercase">${loan.item}</p>` : ''}
+                            </div>
+                        </div>
+                        <span class="border border-black bg-stone-100 text-black text-[9px] font-bold uppercase px-1.5 py-0.5 tracking-wider">SETTLED</span>
+                    </div>
+                    <div class="border-t border-black pt-3 flex justify-between items-center text-[10px]">
+                        <div>
+                            <p class="text-[8px] text-stone-400 font-bold uppercase tracking-wider">TOTAL PAID VALUE</p>
+                            <p class="font-bold text-stone-700 mt-0.5">${formatMoney(loan.amount)}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[8px] text-stone-400 font-bold uppercase tracking-wider">TERMINATION DATE</p>
+                            <p class="font-bold text-stone-600 mt-0.5">${finishStr}</p>
+                        </div>
+                    </div>
+                `;
+                archiveList.appendChild(card);
+            });
+
+            document.getElementById('archive-total-completed').innerText = formatMoney(totalCompletedAmt);
+            document.getElementById('archive-count').innerText = completedLoans.length;
+        }
+
+        window.renderExpenses = () => {
+            const tbody = document.getElementById('expense-table-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const mFilter = document.getElementById('expense-filter-month').value;
+            const yFilter = document.getElementById('expense-filter-year').value;
+            const sFilter = document.getElementById('expense-filter-shop').value;
+
+            const rawExpenses = loans.filter(l => l.type === 'expense');
+
+            let filteredExpenses = rawExpenses.filter(exp => {
+                const pDate = new Date(exp.date);
+                const monthMatch = mFilter === 'all' || pDate.getMonth().toString() === mFilter;
+                const yearMatch = yFilter === 'all' || pDate.getFullYear().toString() === yFilter;
+                const shopMatch = sFilter === 'all' || exp.lender === sFilter;
+                return monthMatch && yearMatch && shopMatch;
+            });
+
+            filteredExpenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            let totalSpent = 0;
+            let shopTally = {};
+
+            if (filteredExpenses.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-stone-500 font-bold uppercase tracking-widest">
+                            No matching expenses logged in ledger.
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('expense-total-display').innerText = formatMoney(0);
+                document.getElementById('expense-chart-container').innerHTML = `
+                    <p class="text-stone-400 text-center py-4 uppercase">No chart metrics.</p>
+                `;
+                return;
+            }
+
+            filteredExpenses.forEach(exp => {
+                totalSpent += parseFloat(exp.amount);
+                shopTally[exp.lender] = (shopTally[exp.lender] || 0) + parseFloat(exp.amount);
+
+                const combineBadge = exp.isCombined 
+                    ? `<span class="border border-black bg-black text-white text-[8px] font-bold px-1.5 py-0.5 ml-2 tracking-wider">COMBINED (${1 + (exp.subItems?.length || 0)} ITEMS)</span>` 
+                    : '';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-stone-50 transition-colors border-b border-stone-200 cursor-pointer";
+                tr.onclick = () => openDetails(exp.id);
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-stone-800">${new Date(exp.date).toLocaleDateString()}</td>
+                    <td class="p-3 font-bold text-black uppercase"><i class="fas fa-shopping-bag text-stone-400 mr-1"></i> ${exp.lender}</td>
+                    <td class="p-3 font-semibold text-stone-700 uppercase flex items-center">${exp.item} ${combineBadge}</td>
+                    <td class="p-3 text-right font-bold text-black">${formatMoney(exp.amount)}</td>
+                    <td class="p-3 text-center" onclick="event.stopPropagation()">
+                        <div class="flex gap-1 justify-center">
+                            <button onclick="editLoan('${exp.id}', 'shopping'); switchTab('shopping')" class="text-black bg-white border border-stone-300 hover:border-black px-2 py-1"><i class="fas fa-pen text-[10px]"></i></button>
+                            <button onclick="deleteLoan('${exp.id}')" class="text-black bg-white border border-stone-300 hover:border-black px-2 py-1"><i class="fas fa-trash text-[10px]"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('expense-total-display').innerText = formatMoney(totalSpent);
+
+            const chartBox = document.getElementById('expense-chart-container');
+            chartBox.innerHTML = '';
+
+            const maxTally = Math.max(...Object.values(shopTally));
+
+            Object.entries(shopTally).forEach(([shop, amt]) => {
+                const percent = maxTally > 0 ? (amt / maxTally) * 100 : 0;
+                const barLength = Math.round(percent / 10);
+                const barCharacters = "█".repeat(barLength) + "░".repeat(10 - barLength);
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "space-y-1 border-b border-stone-100 pb-1.5";
+                itemDiv.innerHTML = `
+                    <div class="flex justify-between font-bold text-stone-700">
+                        <span>${shop.toUpperCase()}</span>
+                        <span>${formatMoney(amt)}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-stone-400 tracking-tighter">${barCharacters}</span>
+                        <span class="text-[9px] text-stone-500">(${percent.toFixed(0)}%)</span>
+                    </div>
+                `;
+                chartBox.appendChild(itemDiv);
+            });
+        };
+
+        function renderData() {
+            const types = ['shopping', 'money', 'appliances'];
+            let totalBalanceActual = 0;
+            let totalMonthlyActual = 0;
+            let activeLoansCountActual = 0;
+            let alertsHTML = '';
+            
+            const activeLoansList = loans.filter(l => l.type !== 'expense' && l.paid < l.months);
+            const oneMonthLoans = activeLoansList.filter(l => l.months - l.paid === 1);
+            const dashOneMonthSec = document.getElementById('dashboard-1month-section');
+            const dashOneMonthTbody = document.getElementById('dash-1month-tbody');
+            if (dashOneMonthTbody) dashOneMonthTbody.innerHTML = '';
+            
+            if (oneMonthLoans.length > 0 && dashOneMonthSec) {
+                dashOneMonthSec.classList.remove('hidden');
+                oneMonthLoans.forEach(l => {
+                    const icon = l.type === 'shopping' ? 'fa-box-open' : l.type === 'money' ? 'fa-money-bill-wave' : 'fa-tv';
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-stone-200 hover:bg-stone-50 transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-3 border-r border-stone-200"><i class="fas ${icon} text-stone-400 mr-2"></i> <span class="capitalize font-bold text-stone-600">${l.type}</span></td>
+                        <td class="p-3 border-r border-stone-200 font-bold text-stone-800 uppercase">${l.item || l.lender}</td>
+                        <td class="p-3 border-r border-stone-200 text-right font-bold text-stone-800">${formatMoney(l.monthly)}</td>
+                        <td class="p-3 font-bold text-stone-600">${getNextDueDate(l.date, l.paid, l.type).toLocaleDateString()}</td>
+                    `;
+                    dashOneMonthTbody.appendChild(tr);
+                });
+            } else if (dashOneMonthSec) {
+                dashOneMonthSec.classList.add('hidden');
+            }
+
+            const activeShoppingActual = loans.filter(l => l.type === 'shopping' && l.paid < l.months);
+            const earliestShoppingDueTime = activeShoppingActual.length > 0 
+                ? Math.min(...activeShoppingActual.map(l => getNextDueDate(l.date, l.paid, l.type).getTime()))
+                : null;
+
+            const dueSoonAlertsList = [];
+
+            loans.forEach(loan => {
+                if (loan.type === 'expense') return;
+                
+                const isDone = loan.paid >= loan.months;
+                if (!isDone) {
+                    const remainingBal = loan.amount - (loan.monthly * loan.paid);
+                    totalBalanceActual += remainingBal;
+                    activeLoansCountActual++;
+                    
+                    const nextDue = getNextDueDate(loan.date, loan.paid, loan.type);
+                    let isStandby = false;
+                    if (loan.type === 'shopping' && earliestShoppingDueTime) {
+                        if (nextDue.getTime() > earliestShoppingDueTime) {
+                            isStandby = true;
+                        }
+                    }
+                    if (!isStandby) {
+                        totalMonthlyActual += loan.monthly;
+                    }
+
+                    const daysLeft = getDaysUntil(nextDue);
+                    if (daysLeft >= 0 && daysLeft <= 5) {
+                        dueSoonAlertsList.push({
+                            id: loan.id,
+                            lender: loan.lender,
+                            item: loan.item,
+                            monthly: loan.monthly,
+                            daysLeft: daysLeft,
+                            nextDue: nextDue,
+                            type: loan.type,
+                            icon: loan.type === 'shopping' ? 'fa-box-open' : loan.type === 'money' ? 'fa-money-bill-wave' : 'fa-tv'
+                        });
+                    }
+                }
+            });
+
+            types.forEach(type => {
+                const list = document.getElementById(`${type}-list`);
+                if(!list) return;
+                list.innerHTML = '';
+
+                const targetDate = projectionDates[type];
+                const targetYear = targetDate.getFullYear();
+                const targetMonth = targetDate.getMonth();
+                const today = new Date();
+                const isProjection = (targetYear !== today.getFullYear() || targetMonth !== today.getMonth());
+
+                const labelEl = document.getElementById(`${type}-projection-label`);
+                if (labelEl) {
+                    const formattedDateStr = targetDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
+                    labelEl.innerText = isProjection ? `${formattedDateStr} (FUTURE VIEW)` : `${formattedDateStr} (ACTUAL CURRENT)`;
+                }
+
+                const formContainer = document.getElementById(`${type}-form-container`);
+                if (formContainer) {
+                    if (isProjection) {
+                        formContainer.classList.add('hidden');
+                    } else {
+                        formContainer.classList.remove('hidden');
+                    }
+                }
+
+                const listContainer = document.getElementById(`${type}-list`);
+                if (listContainer) {
+                    if (isProjection) {
+                        listContainer.className = "lg:col-span-3 space-y-4";
+                    } else {
+                        listContainer.className = "lg:col-span-2 space-y-4";
+                    }
+                }
+
+                document.getElementById(`${type}-summary-paid-label`).innerText = isProjection ? "PROJECTED PAID TO DATE" : "PAID SO FAR";
+                document.getElementById(`${type}-summary-monthly-label`).innerText = isProjection ? "PROJECTED DUES" : "MONTHLY LIABILITY";
+                document.getElementById(`${type}-summary-remaining-label`).innerText = isProjection ? "PROJECTED REMAINING" : "OUTSTANDING PRINCIPAL";
+
+                let renderedLoans = [];
+                let catTotalPaid = 0;
+                let catTotalMonthlyCurrent = 0;
+                let catTotalRemaining = 0;
+
+                const categoryLoans = loans.filter(l => l.type === type);
+
+                if (isProjection) {
+                    categoryLoans.forEach(loan => {
+                        const projInfo = getProjectedInstallmentInfo(loan, targetYear, targetMonth);
+                        
+                        const start = new Date(loan.date);
+                        const startComparison = new Date(start.getFullYear(), start.getMonth(), 1);
+                        const targetComparison = new Date(targetYear, targetMonth, 1);
+                        const endComparison = getFinishDate(loan.date, loan.months, loan.type);
+                        const endComparisonTrunc = new Date(endComparison.getFullYear(), endComparison.getMonth(), 1);
+
+                        if (targetComparison < startComparison) {
+                            catTotalRemaining += parseFloat(loan.amount);
+                        } else if (targetComparison > endComparisonTrunc) {
+                            catTotalPaid += parseFloat(loan.amount);
+                        } else if (projInfo.isActive) {
+                            renderedLoans.push({
+                                ...loan,
+                                isProjected: true,
+                                projectedInstallmentNum: projInfo.installmentNum,
+                                projectedDueDate: projInfo.projectedDueDate
+                            });
+
+                            catTotalPaid += (loan.monthly * projInfo.installmentNum);
+                            catTotalMonthlyCurrent += loan.monthly;
+                            catTotalRemaining += (loan.amount - (loan.monthly * projInfo.installmentNum));
+                        }
+                    });
+                } else {
+                    categoryLoans.forEach(loan => {
+                        const isDone = loan.paid >= loan.months;
+                        if (isDone) {
+                            catTotalPaid += parseFloat(loan.amount);
+                        } else {
+                            renderedLoans.push(loan);
+                            
+                            const nextDue = getNextDueDate(loan.date, loan.paid, loan.type);
+                            let isStandby = false;
+                            if (type === 'shopping' && earliestShoppingDueTime) {
+                                if (nextDue.getTime() > earliestShoppingDueTime) {
+                                    isStandby = true;
+                                }
+                            }
+
+                            catTotalPaid += (loan.monthly * loan.paid);
+                            catTotalRemaining += (loan.amount - (loan.monthly * loan.paid));
+                            if (!isStandby) {
+                                catTotalMonthlyCurrent += loan.monthly;
+                            }
+                        }
+                    });
+                }
+
+                document.getElementById(`${type}-summary-paid`).innerText = formatMoney(catTotalPaid);
+                document.getElementById(`${type}-summary-monthly`).innerText = formatMoney(catTotalMonthlyCurrent);
+                document.getElementById(`${type}-summary-remaining`).innerText = formatMoney(catTotalRemaining);
+
+                if (renderedLoans.length === 0) {
+                    const icon = type === 'shopping' ? 'fa-box-open' : type === 'money' ? 'fa-money-bill-wave' : 'fa-tv';
+                    list.innerHTML = `
+                        <div class="text-center py-12 border border-dashed border-black bg-stone-50">
+                            <i class="fas ${icon} text-3xl mb-3 text-stone-400"></i>
+                            <p class="font-bold text-sm text-stone-600 uppercase tracking-wider">NO ACTIVE RECORDS DETECTED IN ${isProjection ? 'THIS FUTURE MONTH' : 'CURRENT STATUS'}.</p>
+                        </div>`;
+                    return;
+                }
+
+                renderedLoans.forEach(loan => {
+                    const icon = type === 'shopping' ? 'fa-box-open' : type === 'money' ? 'fa-money-bill-wave' : 'fa-tv';
+                    const card = document.createElement('div');
+                    card.className = "mini-card transition-all";
+
+                    if (loan.isProjected) {
+                        const progress = Math.min((loan.projectedInstallmentNum / loan.months) * 100, 100);
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start mb-4 text-xs">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-black border border-black p-2.5 w-10 h-10 flex items-center justify-center"><i class="fas ${icon}"></i></div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-black uppercase leading-tight">${loan.lender}</h4>
+                                        ${loan.item ? `<p class="text-stone-500 font-bold text-[10px] mt-0.5 uppercase">${loan.item}</p>` : ''}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-sm text-black">${formatMoney(loan.monthly)}</span>
+                                    <p class="text-[8px] font-bold text-stone-400 mt-1 uppercase tracking-wider">/ MONTH</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-2 text-xs">
+                                <div class="flex justify-between text-[10px] mb-1 font-bold text-stone-500 uppercase tracking-wider">
+                                    <span>PROJECTED INST: ${loan.projectedInstallmentNum}/${loan.months} MO</span>
+                                    <span>${formatMoney(loan.projectedInstallmentNum * loan.monthly)} / ${formatMoney(loan.amount)}</span>
+                                </div>
+                                <div class="w-full bg-stone-100 border border-black h-3 overflow-hidden relative">
+                                    <div class="bg-black h-full progress-bar-minimal" style="width: ${progress}%"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] mt-2 font-bold text-stone-600">
+                                    <span>PROJECTED DUE: <strong class="text-black">${loan.projectedDueDate.toLocaleDateString()}</strong></span>
+                                    <span>FINAL DUE: <strong class="text-black">${getFinishDate(loan.date, loan.months, loan.type).toLocaleDateString()}</strong></span>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-stone-200 flex justify-end">
+                                <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest border border-dashed border-stone-300 px-3 py-1.5">[ SIMULATED VIEW ONLY ]</span>
+                            </div>
+                        `;
+                    } else {
+                        const progress = Math.min((loan.paid / loan.months) * 100, 100);
+                        const nextDue = getNextDueDate(loan.date, loan.paid, loan.type);
+                        const rebateValue = calculateRebate(loan);
+                        const isBNPL = type === 'shopping' && parseInt(loan.months) === 1;
+                        
+                        let isStandby = false;
+                        if (type === 'shopping' && earliestShoppingDueTime) {
+                            if (nextDue.getTime() > earliestShoppingDueTime) {
+                                isStandby = true;
+                            }
+                        }
+
+                        if(isStandby) card.classList.add('opacity-60');
+
+                        const rebateHTML = (rebateValue > 0) 
+                            ? `<div class="mt-2 bg-stone-100 border border-stone-300 py-1.5 px-3 flex items-center justify-between text-[10px]">
+                                 <span class="text-stone-500 font-bold uppercase"><i class="fas fa-piggy-bank mr-1"></i>Pre-pay Saved Interest:</span>
+                                 <span class="font-bold text-black">${formatMoney(rebateValue)}</span>
+                               </div>`
+                            : '';
+
+                        const bnplBadge = isBNPL 
+                            ? `<span class="border-2 border-black bg-black text-white text-[8px] font-bold uppercase px-1.5 py-0.5 tracking-wider">BUY NOW PAY LATER</span>`
+                            : '';
+
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start mb-4 text-xs" onclick="openDetails('${loan.id}')">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-black border border-black p-2.5 w-10 h-10 flex items-center justify-center"><i class="fas ${icon}"></i></div>
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-1.5">
+                                            <h4 class="font-bold text-sm text-black uppercase leading-tight">${loan.lender}</h4>
+                                            ${isStandby ? '<span class="border border-black bg-stone-100 text-stone-600 text-[8px] font-bold uppercase px-1 py-0.5 rounded-md tracking-wider">STANDBY</span>' : ''}
+                                            ${bnplBadge}
+                                        </div>
+                                        ${loan.item ? `<p class="text-stone-500 font-bold text-[10px] mt-0.5 uppercase">${loan.item}</p>` : ''}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-sm text-black">${formatMoney(loan.monthly)}</span>
+                                    <p class="text-[8px] font-bold text-stone-400 mt-1 uppercase tracking-wider">/ MONTH</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4 text-xs" onclick="openDetails('${loan.id}')">
+                                <div class="flex justify-between text-[10px] mb-1 font-bold text-stone-500 uppercase tracking-wider">
+                                    <span>PAID: ${loan.paid}/${loan.months} MO</span>
+                                    <span>${formatMoney(loan.paid * loan.monthly)} / ${formatMoney(loan.amount)}</span>
+                                </div>
+                                <div class="w-full bg-stone-100 border border-black h-3 overflow-hidden relative">
+                                    <div class="bg-black h-full progress-bar-minimal" style="width: ${progress}%"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] mt-2 font-bold ${isStandby ? 'text-stone-400' : 'text-stone-600'}">
+                                    <span>NEXT DUE: <strong class="text-black">${nextDue.toLocaleDateString()}</strong></span>
+                                    <span>FINAL DUE: <strong class="text-black">${getFinishDate(loan.date, loan.months, loan.type).toLocaleDateString()}</strong></span>
+                                </div>
+                                ${rebateHTML}
+                            </div>
+                        `;
+
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'flex justify-between items-center pt-3 border-t border-stone-200';
+                        actionsDiv.innerHTML = `
+                            <div class="flex gap-1.5">
+                                <button onclick="event.stopPropagation(); editLoan('${loan.id}', '${type}')" class="text-black bg-white border border-stone-300 hover:border-black p-2 transition-all"><i class="fas fa-pen text-xs"></i></button>
+                                <button onclick="event.stopPropagation(); deleteLoan('${loan.id}')" class="text-black bg-white border border-stone-300 hover:border-black p-2 transition-all"><i class="fas fa-trash text-xs"></i></button>
+                            </div>
+                            <button onclick="event.stopPropagation(); requestPayment('${loan.id}')" class="mini-btn py-1.5 px-3 text-xs">
+                                RECORD PAY
+                            </button>
+                        `;
+                        card.appendChild(actionsDiv);
+                    }
+                    list.appendChild(card);
+                });
+            });
+
+            if (dueSoonAlertsList.length > 0) {
+                const totalDueAmt = dueSoonAlertsList.reduce((acc, item) => acc + item.monthly, 0);
+                
+                let detailsRowsHTML = '';
+                dueSoonAlertsList.forEach(alertItem => {
+                    detailsRowsHTML += `
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-3 border border-black text-xs gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-stone-100 border border-black p-2 text-black text-xs w-8 h-8 flex items-center justify-center"><i class="fas ${alertItem.icon}"></i></div>
+                                <div>
+                                    <p class="font-bold text-black uppercase">${alertItem.lender} ${alertItem.item ? `(${alertItem.item})` : ''}</p>
+                                    <p class="text-[10px] text-stone-500 mt-0.5">DUE IN <span class="font-bold text-black">${alertItem.daysLeft} DAYS</span> (${alertItem.nextDue.toLocaleDateString()})</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
+                                <span class="font-bold text-black">${formatMoney(alertItem.monthly)}</span>
+                                <button onclick="switchTab('${alertItem.type}'); requestPayment('${alertItem.id}')" class="mini-btn py-1 px-3 text-[10px]">PAY NOW</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                alertsHTML = `
+                    <div class="bg-white border-2 border-black p-4 max-w-7xl mx-auto w-full">
+                        <div onclick="toggleAlertsList()" class="flex items-center justify-between cursor-pointer select-none text-xs">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-black text-white p-3 flex items-center justify-center w-10 h-10 border border-black"><i class="fas fa-exclamation-triangle"></i></div>
+                                <div>
+                                    <p class="font-bold text-black uppercase">PAYMENT DUES APPROACHING</p>
+                                    <p class="text-[10px] text-stone-600 mt-0.5">${dueSoonAlertsList.length} ACCOUNTS DUE WITHIN 5 DAYS • TOTAL CURRENT: <span class="font-bold">${formatMoney(totalDueAmt)}</span></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold text-black border border-black bg-stone-100 px-2.5 py-1 uppercase tracking-wider" id="alerts-toggle-label">${isAlertsExpanded ? 'HIDE LIST' : 'VIEW LIST'}</span>
+                                <i id="alerts-chevron" class="fas fa-chevron-down text-black transition-transform duration-300 ${isAlertsExpanded ? 'rotate-180' : ''}"></i>
+                            </div>
+                        </div>
+                        <div id="alerts-expanded-list" class="${isAlertsExpanded ? '' : 'hidden'} mt-4 pt-4 border-t border-black space-y-2">
+                            ${detailsRowsHTML}
+                        </div>
+                    </div>
+                `;
+            }
+
+            const firstTimeLoans = loans.filter(l => l.type !== 'expense' && l.paid === 0);
+            let firstTimeHTML = '';
+
+            if (firstTimeLoans.length > 0) {
+                let ftRowsHTML = '';
+                firstTimeLoans.forEach(item => {
+                    const icon = item.type === 'shopping' ? 'fa-box-open' : item.type === 'money' ? 'fa-money-bill-wave' : 'fa-tv';
+                    ftRowsHTML += `
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-3 border border-black text-xs gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-stone-100 border border-black p-2 text-black text-xs w-8 h-8 flex items-center justify-center"><i class="fas ${icon}"></i></div>
+                                <div>
+                                    <p class="font-bold text-black uppercase">${item.lender} ${item.item ? `(${item.item})` : ''}</p>
+                                    <p class="text-[10px] text-stone-500 mt-0.5">CATEGORY: <span class="capitalize font-bold text-black">${item.type}</span> • CREATED: <span class="font-bold">${new Date(item.date).toLocaleDateString()}</span> • TOTAL DUE: <span class="font-bold">${formatMoney(item.amount)}</span></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
+                                <span class="font-bold text-black">${formatMoney(item.monthly)}</span>
+                                <button onclick="switchTab('${item.type}'); requestPayment('${item.id}')" class="mini-btn py-1 px-3 text-[10px]">PAY FIRST MONTH</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                firstTimeHTML = `
+                    <div class="bg-stone-50 border border-black p-4 max-w-7xl mx-auto w-full">
+                        <div onclick="toggleFirstTimeList()" class="flex items-center justify-between cursor-pointer select-none text-xs">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-3 border border-black text-black w-10 h-10 flex items-center justify-center"><i class="fas fa-folder-plus"></i></div>
+                                <div>
+                                    <p class="font-bold text-black uppercase">NEW UNPAID ENTRIES (FIRST PAY)</p>
+                                    <p class="text-[10px] text-stone-600 mt-0.5">${firstTimeLoans.length} ACCOUNTS AWAITING INITIATING TRANSACTION</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold text-black border border-black bg-white px-2.5 py-1 uppercase tracking-wider" id="firsttime-toggle-label">${isFirstTimeExpanded ? 'HIDE LIST' : 'VIEW LIST'}</span>
+                                <i id="firsttime-chevron" class="fas fa-chevron-down text-black transition-transform duration-300 ${isFirstTimeExpanded ? 'rotate-180' : ''}"></i>
+                            </div>
+                        </div>
+                        <div id="firsttime-expanded-list" class="${isFirstTimeExpanded ? '' : 'hidden'} mt-4 pt-4 border-t border-black space-y-2">
+                            ${ftRowsHTML}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('firsttime-container').innerHTML = firstTimeHTML;
+
+            const activeLoans = loans.filter(l => l.type !== 'expense' && (parseInt(l.paid) || 0) < (parseInt(l.months) || 0));
+            let maxFinishDate = null;
+            
+            activeLoans.forEach(l => {
+                const finishDate = getFinishDate(l.date, l.months, l.type);
+                if (!maxFinishDate || finishDate > maxFinishDate) {
+                    maxFinishDate = finishDate;
+                }
+            });
+            
+            const dfDateEl = document.getElementById('dash-debt-free-date');
+            const dfCountEl = document.getElementById('dash-debt-free-countdown');
+            
+            if (dfDateEl && dfCountEl) {
+                if (maxFinishDate) {
+                    const formattedDate = maxFinishDate.toLocaleDateString();
+                    dfDateEl.innerText = formattedDate;
+                    
+                    const daysLeft = getDaysUntil(maxFinishDate);
+                    if (daysLeft < 0) {
+                        dfDateEl.innerText = "NO DEBT 🎉";
+                        dfCountEl.innerText = "CONGRATULATIONS!";
+                    } else if (daysLeft === 0) {
+                        dfCountEl.innerText = "TODAY IS YOUR LAST DUE! 🥳";
+                    } else {
+                        const monthsLeft = Math.ceil(daysLeft / 30.41);
+                        if (monthsLeft <= 1) {
+                            dfCountEl.innerText = `${daysLeft} DAYS REMAINING!`;
+                        } else {
+                            dfCountEl.innerText = `~${monthsLeft} MONTHS UNTIL DEBT FREE`;
+                        }
+                    }
+                } else {
+                    dfDateEl.innerText = "NO DEBT 🎉";
+                    dfCountEl.innerText = "CONGRATULATIONS!";
+                }
+            }
+
+            document.getElementById('dash-total-balance').innerText = formatMoney(totalBalanceActual);
+            document.getElementById('dash-total-monthly').innerText = formatMoney(totalMonthlyActual);
+            document.getElementById('dash-total-loans').innerText = activeLoansCountActual;
+            if (document.getElementById('alerts-container')) {
+                document.getElementById('alerts-container').innerHTML = alertsHTML;
+            }
+
+            renderArchive();
+            renderExpenses();
+        }
+
+        let calcRowCount = 0;
+        let calcCustomColCount = 0;
+
+        function initCalculator() {
+            const tbody = document.getElementById('calc-tbody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            while(calcCustomColCount > 0) {
+                deleteCalcColumn();
+            }
+
+            calcRowCount = 0;
+            for(let i = 0; i < 6; i++) {
+                addCalcRow();
+            }
+            calcGrandTotal();
+        }
+
+        function addCalcRow() {
+            const tbody = document.getElementById('calc-tbody');
+            const i = calcRowCount++;
+            
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-stone-50 transition-colors text-xs";
+            tr.id = `calc-row-${i}`;
+
+            let customColsHtml = '';
+            for(let c = 0; c < calcCustomColCount; c++) {
+                customColsHtml += `<td class="p-0 border-r border-black custom-col-${c}"><input type="text" class="w-full h-full bg-transparent p-3 outline-none text-xs font-semibold text-stone-700" placeholder="..."></td>`;
+            }
+
+            tr.innerHTML = `
+                <td class="p-0 border-r border-black">
+                    <input type="text" class="w-full h-full bg-transparent p-3 outline-none text-xs font-semibold text-black uppercase" placeholder="ROW ${i+1}">
+                </td>
+                ${customColsHtml}
+                <td class="p-0 border-r border-black">
+                    <input type="number" step="0.01" oninput="calcRow(${i})" id="calc-amt-${i}" class="w-full h-full bg-transparent p-3 outline-none text-xs font-bold text-stone-700" placeholder="0.00">
+                </td>
+                <td class="p-0 border-r border-black">
+                    <input type="number" oninput="calcRow(${i})" id="calc-mo-${i}" class="w-full h-full bg-transparent p-3 outline-none text-xs font-bold text-stone-700" placeholder="0">
+                </td>
+                <td class="p-0 border-r border-black">
+                    <input type="number" step="0.01" oninput="calcRow(${i})" id="calc-mopay-${i}" class="w-full h-full bg-transparent p-3 outline-none text-xs font-bold text-stone-700" placeholder="0.00">
+                </td>
+                <td class="p-3 bg-stone-50 text-right font-bold text-black" id="calc-total-${i}">₱0.00</td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function deleteCalcRow() {
+            const tbody = document.getElementById('calc-tbody');
+            if (tbody.children.length <= 1) return; 
+            tbody.removeChild(tbody.lastElementChild);
+            calcRowCount--;
+            calcGrandTotal();
+        }
+
+        function addCalcColumn() {
+            const c = calcCustomColCount++;
+            
+            const theadTr = document.querySelector('#calc-table thead tr');
+            const th = document.createElement('th');
+            th.className = `p-3 font-bold text-xs text-black custom-col-${c} min-w-[120px]`;
+            th.innerHTML = `<input type="text" value="NEW COL" class="bg-transparent font-bold text-black outline-none w-full border-b border-dashed border-black pb-0.5">`;
+            theadTr.insertBefore(th, theadTr.children[1 + c]); 
+
+            const tbody = document.getElementById('calc-tbody');
+            Array.from(tbody.children).forEach(tr => {
+                const td = document.createElement('td');
+                td.className = `p-0 border-r border-black custom-col-${c}`;
+                td.innerHTML = `<input type="text" class="w-full h-full bg-transparent p-3 outline-none text-xs font-semibold text-stone-700" placeholder="...">`;
+                tr.insertBefore(td, tr.children[1 + c]);
+            });
+
+            const tfootTr = document.querySelector('#calc-table tfoot tr');
+            const tdFoot = document.createElement('td');
+            tdFoot.className = `p-3 custom-col-${c}`;
+            tfootTr.insertBefore(tdFoot, tfootTr.children[1 + c]);
+        }
+
+        function deleteCalcColumn() {
+            if (calcCustomColCount <= 0) return;
+            calcCustomColCount--;
+            const c = calcCustomColCount;
+            document.querySelectorAll(`.custom-col-${c}`).forEach(el => el.remove());
+        }
+
+        window.calcRow = (idx) => {
+            const mo = parseFloat(document.getElementById(`calc-mo-${idx}`).value) || 0;
+            const mopay = parseFloat(document.getElementById(`calc-mopay-${idx}`).value) || 0;
+            const totalCell = document.getElementById(`calc-total-${idx}`);
+            
+            const rowTotal = mo * mopay;
+            if(totalCell) totalCell.innerText = formatMoney(rowTotal);
+            calcGrandTotal();
+        }
+
+        window.calcGrandTotal = () => {
+            let totalAmt = 0;
+            let totalMonthly = 0;
+            let grandTotal = 0;
+            
+            for(let i=0; i <= calcRowCount; i++) { 
+                const amtEl = document.getElementById(`calc-amt-${i}`);
+                const mopayEl = document.getElementById(`calc-mopay-${i}`);
+                const moEl = document.getElementById(`calc-mo-${i}`);
+
+                if(amtEl || mopayEl || moEl) {
+                    totalAmt += parseFloat(amtEl?.value) || 0;
+                    totalMonthly += parseFloat(mopayEl?.value) || 0;
+                    const mo = parseFloat(moEl?.value) || 0;
+                    const mopay = parseFloat(mopayEl?.value) || 0;
+                    grandTotal += (mo * mopay);
+                }
+            }
+            
+            document.getElementById('calc-grand-amt').innerText = formatMoney(totalAmt);
+            document.getElementById('calc-grand-monthly').innerText = formatMoney(totalMonthly);
+            document.getElementById('calc-grand-total').innerText = formatMoney(grandTotal);
+        }
+
+        window.downloadCSVTemplate = () => {
+            const headers = "type,lender,item,principal,processingFee,interestRate,amount,date,months,monthly,paid\n";
+            const row = "shopping,SPayLater,Monitor,15000.00,150.00,1.5,16350.00,2025-10-02,6,2725.00,1\n";
+            const blob = new Blob([headers + row], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'loan_template.csv';
+            a.click();
+        };
+
+        window.exportData = () => {
+            if(loans.length === 0) return showToast('NO DATA FOUND TO EXPORT.');
+            let csv = "id,type,lender,item,principal,processingFee,interestRate,amount,date,months,monthly,paid\n";
+            loans.forEach(l => {
+                csv += `${l.id},${l.type},"${l.lender}","${l.item || ''}",${l.principal || l.amount},${l.processingFee || 0},${l.interestRate || 0},${l.amount},${l.date},${l.months},${l.monthly},${l.paid}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my_loans_backup.csv';
+            a.click();
+        };
+
+        window.importData = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                const rows = text.split('\n');
+                if(rows.length < 2) return;
+                
+                let added = 0;
+                for(let i=1; i<rows.length; i++) {
+                    const cols = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g); 
+                    if(!cols || cols.length < 8) continue;
+                    
+                    const clean = (str) => str ? str.replace(/(^"|"$)/g, '') : '';
+                    const isTemplate = !cols[0].match(/^\d+$/); 
+                    
+                    let newLoan;
+                    if (cols.length >= 12) {
+                        newLoan = {
+                            id: isTemplate ? Date.now().toString() + i : clean(cols[0]),
+                            type: clean(cols[isTemplate ? 0 : 1]),
+                            lender: clean(cols[isTemplate ? 1 : 2]),
+                            item: clean(cols[isTemplate ? 2 : 3]),
+                            principal: parseFloat(cols[isTemplate ? 3 : 4]),
+                            processingFee: parseFloat(cols[isTemplate ? 4 : 5]),
+                            interestRate: parseFloat(cols[isTemplate ? 5 : 6]),
+                            amount: parseFloat(cols[isTemplate ? 6 : 7]),
+                            date: clean(cols[isTemplate ? 7 : 8]),
+                            months: parseInt(cols[isTemplate ? 8 : 9]),
+                            monthly: parseFloat(cols[isTemplate ? 9 : 10]),
+                            paid: parseInt(cols[isTemplate ? 10 : 11])
+                        };
+                    } else if (cols.length === 11) {
+                        newLoan = {
+                            id: isTemplate ? Date.now().toString() + i : clean(cols[0]),
+                            type: clean(cols[isTemplate ? 0 : 1]),
+                            lender: clean(cols[isTemplate ? 1 : 2]),
+                            item: clean(cols[isTemplate ? 2 : 3]),
+                            principal: parseFloat(cols[isTemplate ? 3 : 4]),
+                            processingFee: 0,
+                            interestRate: parseFloat(cols[isTemplate ? 4 : 5]),
+                            amount: parseFloat(cols[isTemplate ? 5 : 6]),
+                            date: clean(cols[isTemplate ? 6 : 7]),
+                            months: parseInt(cols[isTemplate ? 7 : 8]),
+                            monthly: parseFloat(cols[isTemplate ? 8 : 9]),
+                            paid: parseInt(cols[isTemplate ? 9 : 10])
+                        };
+                    } else {
+                        const fallbackAmount = parseFloat(cols[isTemplate ? 3 : 4]);
+                        newLoan = {
+                            id: isTemplate ? Date.now().toString() + i : clean(cols[0]),
+                            type: clean(cols[isTemplate ? 0 : 1]),
+                            lender: clean(cols[isTemplate ? 1 : 2]),
+                            item: clean(cols[isTemplate ? 2 : 3]),
+                            principal: fallbackAmount,
+                            processingFee: 0,
+                            interestRate: 0,
+                            amount: fallbackAmount,
+                            date: clean(cols[isTemplate ? 4 : 5]),
+                            months: parseInt(cols[isTemplate ? 5 : 6]),
+                            monthly: parseFloat(cols[isTemplate ? 6 : 7]),
+                            paid: parseInt(cols[isTemplate ? 7 : 8])
+                        };
+                    }
+                    
+                    if(newLoan.type && newLoan.lender && !isNaN(newLoan.amount)) {
+                        const existing = loans.findIndex(l => l.id === newLoan.id);
+                        if(existing >= 0) loans[existing] = newLoan;
+                        else loans.push(newLoan);
+                        added++;
+                    }
+                }
+                saveToStorage();
+                renderData();
+                showToast(`IMPORTED ${added} CSV ENTRIES.`);
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        window.exportJSON = () => {
+            if(loans.length === 0) return showToast('NO SCHEMA DATA TO BACKUP.');
+            const dataStr = JSON.stringify(loans, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my_loans_backup.json';
+            a.click();
+        };
+
+        window.importJSON = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if(Array.isArray(imported)) {
+                        let added = 0;
+                        imported.forEach(newLoan => {
+                            if(newLoan.type && newLoan.lender && !isNaN(newLoan.amount)) {
+                                if (newLoan.principal === undefined) newLoan.principal = newLoan.amount;
+                                if (newLoan.processingFee === undefined) newLoan.processingFee = 0;
+                                if (newLoan.interestRate === undefined) newLoan.interestRate = 0;
+
+                                const existing = loans.findIndex(l => l.id === newLoan.id);
+                                if(existing >= 0) loans[existing] = newLoan;
+                                else loans.push(newLoan);
+                                added++;
+                            }
+                        });
+                        saveToStorage();
+                        renderData();
+                        showToast(`RESTORED ${added} SCHEMAS SUCCESSFULLY.`);
+                    } else {
+                        showToast('INVALID DUMP FORMAT.');
+                    }
+                } catch(err) {
+                    showToast('ERROR RETRIEVING JSON DUMP.');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        renderData();
+        initCalculator();
+    </script>
+</body>
+</html>
